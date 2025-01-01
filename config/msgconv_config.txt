@@ -1,0 +1,53 @@
+[sensor0]
+enable=1
+type=Camera
+id=CAMERA_01
+location=40.7128;-74.0060;0.0
+description="Traffic Camera at Intersection"
+coordinate=5.0;10.0;0.0
+
+[place0]
+enable=1
+id=1
+type=video
+name="H264 Video Source"
+location=0.0;0.0;0.0
+coordinate=0.0;0.0;0.0
+
+
+[analytics0]
+enable=1
+id=VIDEO_ANALYTICS
+description="Object Detection from H264 video"
+source=YOLO
+version=1.0
+
+
+
+#{
+ #   "schema_version": "1.0",
+  #  "dynamic_data": true,
+  #  "payload": {
+   #     "format": "json",
+    #    "enable": true,
+     #   "disable": false
+   # }
+#}
+
+
+
+#payload: {
+ #   version: 1,
+  #  message: {
+   #     format: "JSON",
+    #    schema: {
+     #       inference: {
+      #          bounding-box: ["x", "y", "width", "height"],
+       #         confidence: "float",
+        #        class-id: "int",
+         #       label: "string"
+          #  }
+       # }
+    #}
+#}
+
