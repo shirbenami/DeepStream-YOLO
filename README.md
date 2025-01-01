@@ -178,7 +178,10 @@ Use a media player (like VLC) to review the detection results in the video.
 
 ---
 
-## Guide for train YOLO Model
+
+
+# Guide for train YOLO Model
+
 ### 1. Project Setup
 ```bash
 cd /opt/nvidia/deepstream/deepstream-5.1/samples/configs/deepstream-app
