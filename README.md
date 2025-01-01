@@ -174,6 +174,55 @@ ls /workspace/ssl_project/output/output_video.mp4
 ### 2. Play the Output Video
 Use a media player (like VLC) to review the detection results in the video.
 
+
+
+---
+
+## Guide for train YOLO Model
+### 1. Project Setup
+```bash
+cd /opt/nvidia/deepstream/deepstream-5.1/samples/configs/deepstream-app
+```
+1. Clone the DeepStream-Yolo repository:
+```bash
+git clone https://github.com/NVIDIA-AI-IOT/deepstream_python_apps
+git clone https://github.com/marcoslucianops/DeepStream-Yolo.git
+cd DeepStream-Yolo
+```
+2. Build the custom parser:
+```bash
+cd nvdsinfer_custom_impl_Yolo
+make clean && make
+```
+**If there is an issue, modify yolo.cpp:**
+```cpp
+nvinfer1::ICudaEngine* engine = nullptr;
+nvinfer1::IHostMemory* serializedEngine = builder->buildSerializedNetwork(*network, *config);
+if (!serializedEngine) {
+    std::cerr << "Failed to create serialized engine!" << std::endl;
+    return nullptr;
+}
+engine = runtime->deserializeCudaEngine(serializedEngine->data(), serializedEngine->size());
+serializedEngine->destroy();
+```
+
+### 3. Configure YOLOv8
+Edit the YOLOv8 configuration file:
+```ini
+[property]
+gpu-id=0
+net-scale-factor=0.0039215697906911373
+onnx-file=/opt/nvidia/deepstream/deepstream-5.1/samples/configs/deepstream-app/DeepStream-Yolo/yolov8s.pt.onnx
+labelfile-path=/opt/nvidia/deepstream/deepstream-5.1/samples/configs/deepstream-app/DeepStream-Yolo/labels.txt
+model-engine-file=model_b1_gpu0_fp32.engine
+num-detected-classes=80
+```
+Run application:
+```bash
+deepstream-app -c deepstream_app_config_YOLO8.txt
+```
+
+
 ---
 
 **End of Guide**
