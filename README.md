@@ -232,6 +232,9 @@ Run application:
 deepstream-app -c deepstream_app_config_YOLO8.txt
 ```
 
+Run "pipeline_nvmconv.py" :
+python3 pipeline_nvmconv.py /workspace/ssl_project/images/cars_cut2.h264
+
 
 ---
 
