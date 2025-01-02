@@ -212,12 +212,15 @@ serializedEngine->destroy();
 ```
 
 ### 3. Configure YOLOv8
-Edit the YOLOv8 configuration file:
+Edit the YOLOv8 configuration file: 
+``bash
+cd config_infer_primary_yoloV8.txt
+```
 ```ini
 [property]
 gpu-id=0
 net-scale-factor=0.0039215697906911373
-onnx-file=/opt/nvidia/deepstream/deepstream-5.1/samples/configs/deepstream-app/DeepStream-Yolo/yolov8s.pt.onnx
+onnx-file=yolov8s.pt.onnx
 labelfile-path=/opt/nvidia/deepstream/deepstream-5.1/samples/configs/deepstream-app/DeepStream-Yolo/labels.txt
 model-engine-file=model_b1_gpu0_fp32.engine
 num-detected-classes=80
