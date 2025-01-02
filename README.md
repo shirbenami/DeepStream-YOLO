@@ -214,11 +214,11 @@ serializedEngine->destroy();
 ### 3. Configure YOLOv8
 Edit the YOLOv8 configuration file: 
 
-``bash
+```
 cd config_infer_primary_yoloV8.txt
 ```
 
-```ini
+```
 [property]
 gpu-id=0
 net-scale-factor=0.0039215697906911373
