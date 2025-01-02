@@ -205,6 +205,8 @@ if (!serializedEngine) {
     std::cerr << "Failed to create serialized engine!" << std::endl;
     return nullptr;
 }
+
+runtime = nvinfer1::createInferRuntime(logger);
 engine = runtime->deserializeCudaEngine(serializedEngine->data(), serializedEngine->size());
 serializedEngine->destroy();
 ```
