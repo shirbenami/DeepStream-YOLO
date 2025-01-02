@@ -100,7 +100,7 @@ deepstream-app --version-all
 ### 1. Navigate to Configuration Directory
 Inside the container, go to the DeepStream sample configuration directory:
 ```bash
-cd /opt/nvidia/deepstream/deepstream-5.1/samples/configs/deepstream-app
+cd /opt/nvidia/deepstream/deepstream-6.0/samples/configs/deepstream-app
 ```
 
 ### 2. Copy the Sample Configuration File
