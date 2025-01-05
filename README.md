@@ -211,6 +211,14 @@ engine = runtime->deserializeCudaEngine(serializedEngine->data(), serializedEngi
 serializedEngine->destroy();
 ```
 
+modify Makefile:
+```
+CUDA_VER?=11.4
+#ifeq ($(CUDA_VER),)
+#       $(error "CUDA_VER is not set")
+#endif
+```
+
 ### 3. Configure YOLOv8
 Edit the YOLOv8 configuration file: 
 
