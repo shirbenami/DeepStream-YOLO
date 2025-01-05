@@ -197,7 +197,17 @@ cd DeepStream-Yolo
 cd nvdsinfer_custom_impl_Yolo
 make clean && make
 ```
-**If there is an issue, modify yolo.cpp:**
+**If there is an issue:**
+
+modify Makefile:
+```
+CUDA_VER?=11.4
+#ifeq ($(CUDA_VER),)
+#       $(error "CUDA_VER is not set")
+#endif
+```
+
+modify yolo.cpp
 ```cpp
 nvinfer1::ICudaEngine* engine = nullptr;
 nvinfer1::IHostMemory* serializedEngine = builder->buildSerializedNetwork(*network, *config);
@@ -211,19 +221,13 @@ engine = runtime->deserializeCudaEngine(serializedEngine->data(), serializedEngi
 serializedEngine->destroy();
 ```
 
-modify Makefile:
-```
-CUDA_VER?=11.4
-#ifeq ($(CUDA_VER),)
-#       $(error "CUDA_VER is not set")
-#endif
-```
+
 
 ### 3. Configure YOLOv8
 Edit the YOLOv8 configuration file: 
 
 ```
-cd config_infer_primary_yoloV8.txt
+nano config_infer_primary_yoloV8.txt
 ```
 
 ```
