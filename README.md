@@ -72,6 +72,12 @@ docker run -it --gpus all \
 -v /home/user1/shir/ssl_project:/workspace/ssl_project \
 shir_deepstream7.1:1 /bin/bash
 ```
+or:
+
+```bash
+docker run --gpus all -it --net=host --privileged -v /home/user1/shir/ssl_project:/workspace/ssl_project -e DISPLAY=$DISPLAY -w /opt/nvidia/deepstream/deepstream-7.1 nvcr.io/nvidia/deepstream:7.1-gc-triton-devel
+```
+
 **Explanation:**
 - `-it` – Interactive mode to allow terminal interaction.
 - `--gpus all` – Grants access to all GPUs on the system.
