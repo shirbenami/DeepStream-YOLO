@@ -21,6 +21,8 @@ This project is designed for developers and engineers working with NVIDIA GPUs, 
 To download the DeepStream Docker image with Triton Inference Server support, run the following command:
 ```bash
 docker pull nvcr.io/nvidia/deepstream:6.0.1-triton
+or
+docker pull nvcr.io/nvidia/deepstream:7.1-gc-triton-devel
 ```
 **Explanation:**
 - This command pulls the DeepStream version 6.0.1 image from NVIDIA's repository.
@@ -68,8 +70,7 @@ To start the container and access the DeepStream workspace, use the following co
 ```bash
 docker run -it --gpus all \
 -v /home/user1/shir/ssl_project:/workspace/ssl_project \
---name shir_deepstream_with_yolo8 \
-shir_with_yolo:6 /bin/bash
+shir_deepstream7.1:1 /bin/bash
 ```
 **Explanation:**
 - `-it` – Interactive mode to allow terminal interaction.
@@ -250,6 +251,12 @@ python3 pipeline_nvmconv.py /workspace/ssl_project/images/cars_cut2.h264
 ```
 
 ---
+
+
+links:
+https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_docker_containers.html
+https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/9bffad1aea802f6be4419712c0a50f05d6a2d490/bindings#21-base-dependencies
+https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/master
 
 **End of Guide**
 
