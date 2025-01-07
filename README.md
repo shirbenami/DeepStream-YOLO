@@ -191,7 +191,7 @@ Use a media player (like VLC) to review the detection results in the video.
 
 ### 1. Project Setup
 ```bash
-cd /opt/nvidia/deepstream/deepstream-6.0/samples/configs/deepstream-app/DeepStream-Yolo
+cd /opt/nvidia/deepstream/deepstream-6.0/samples/configs/deepstream-app
 ```
 1. Clone the DeepStream-Yolo repository:
 ```bash
