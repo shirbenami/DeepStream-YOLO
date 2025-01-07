@@ -190,6 +190,13 @@ Use a media player (like VLC) to review the detection results in the video.
 # Guide for train YOLO Model
 
 ### 1. Project Setup
+
+*  go to deepstream6.1/sources/ . follow this directions: https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/blob/master/HOWTO.md
+
+* pip3 install this link https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/releases
+
+after this download yolo directory:
+
 ```bash
 cd /opt/nvidia/deepstream/deepstream-6.0/samples/configs/deepstream-app
 ```
