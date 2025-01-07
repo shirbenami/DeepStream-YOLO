@@ -221,7 +221,11 @@ CUDA_VER?=12.2
 #endif
 ```
 
-**example of use in : /opt/nvidia/deepstream/deepstream-7.1/sources/deepstream_python_apps/apps
+** example of use in : /opt/nvidia/deepstream/deepstream-7.1/sources/deepstream_python_apps/apps
+you can run:
+```
+python3 deepstream_test_4.py -i /workspace/ssl_project/images/cars_cut2.h264 -p '/opt/nvidia/deepstream/deepstream-7.1/lib/libnvds_amqp_proto.so' --conn-str="localhost;5672;guest" -c "cfg_amqp.txt"
+```
 
 ### 3. Configure YOLOv8
 Edit the YOLOv8 configuration file: 
