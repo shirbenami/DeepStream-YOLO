@@ -195,7 +195,7 @@ Use a media player (like VLC) to review the detection results in the video.
 
 * pip3 install this link https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/releases
 
-after this download yolo directory:
+after this download the Yolo directory:
 
 ```bash
 cd /opt/nvidia/deepstream/deepstream-6.0/samples/configs/deepstream-app
@@ -215,27 +215,13 @@ make clean && make
 
 modify Makefile:
 ```
-CUDA_VER?=11.4
+CUDA_VER?=12.2
 #ifeq ($(CUDA_VER),)
 #       $(error "CUDA_VER is not set")
 #endif
 ```
 
-modify yolo.cpp
-```cpp
-nvinfer1::ICudaEngine* engine = nullptr;
-nvinfer1::IHostMemory* serializedEngine = builder->buildSerializedNetwork(*network, *config);
-if (!serializedEngine) {
-    std::cerr << "Failed to create serialized engine!" << std::endl;
-    return nullptr;
-}
-
-runtime = nvinfer1::createInferRuntime(logger);
-engine = runtime->deserializeCudaEngine(serializedEngine->data(), serializedEngine->size());
-serializedEngine->destroy();
-```
-
-
+**example of use in : /opt/nvidia/deepstream/deepstream-7.1/sources/deepstream_python_apps/apps
 
 ### 3. Configure YOLOv8
 Edit the YOLOv8 configuration file: 
