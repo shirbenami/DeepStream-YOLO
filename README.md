@@ -195,7 +195,7 @@ Use a media player (like VLC) to review the detection results in the video.
 
 ### 1. Project Setup
 
-*  go to deepstream6.1/sources/ . follow this directions: https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/blob/master/HOWTO.md
+*  go to deepstream7.1/sources/ . follow this directions: https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/blob/master/HOWTO.md
 
 * pip3 install this link https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/releases
 
