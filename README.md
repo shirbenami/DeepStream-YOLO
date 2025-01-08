@@ -6,7 +6,7 @@ This project provides a comprehensive guide to setting up and running NVIDIA Dee
 The guide walks through the process of downloading and configuring the DeepStream Docker image, modifying configuration files, and running experiments on video files. By following these steps, users can create a containerized environment capable of processing video streams and outputting results with object detection overlays.
 
 Key highlights include:
-- Downloading the DeepStream Docker image (version 6.0.1 with Triton support)
+- Downloading the DeepStream Docker image (version 7.1.1 with Triton support)
 - Saving and committing changes to Docker containers
 - Running DeepStream applications in Docker
 - Configuring video input and output parameters
@@ -20,12 +20,12 @@ This project is designed for developers and engineers working with NVIDIA GPUs, 
 ## Step 1: Download the DeepStream Docker Image
 To download the DeepStream Docker image with Triton Inference Server support, run the following command:
 ```bash
-docker pull nvcr.io/nvidia/deepstream:6.0.1-triton
+docker pull nvcr.io/nvidia/deepstream:7.1.1-triton
 or
 docker pull nvcr.io/nvidia/deepstream:7.1-gc-triton-devel
 ```
 **Explanation:**
-- This command pulls the DeepStream version 6.0.1 image from NVIDIA's repository.
+- This command pulls the DeepStream version 7.1.1 image from NVIDIA's repository.
 - The Triton Inference Server is included for enhanced model serving capabilities.
 
 ---
@@ -111,7 +111,7 @@ deepstream-app --version-all
 ### 1. Navigate to Configuration Directory
 Inside the container, go to the DeepStream sample configuration directory:
 ```bash
-cd /opt/nvidia/deepstream/deepstream-6.0/samples/configs/deepstream-app
+cd /opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app
 ```
 
 ### 2. Copy the Sample Configuration File
@@ -158,7 +158,7 @@ Ensure the `[primary-gie]` section points to the correct model paths:
 ```ini
 [primary-gie]
 enable=1
-model-engine-file=/opt/nvidia/deepstream/deepstream-5.1/samples/models/Primary_Detector/resnet10.engine
+model-engine-file=/opt/nvidia/deepstream/deepstream-7.1/samples/models/Primary_Detector/resnet10.engine
 batch-size=1
 bbox-border-color0=1;0;0;1
 bbox-border-color1=0;1;1;1
@@ -202,7 +202,7 @@ Use a media player (like VLC) to review the detection results in the video.
 after this download the Yolo directory:
 
 ```bash
-cd /opt/nvidia/deepstream/deepstream-6.0/samples/configs/deepstream-app
+cd /opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app
 ```
 1. Clone the DeepStream-Yolo repository:
 ```bash
@@ -244,7 +244,7 @@ nano config_infer_primary_yoloV8.txt
 gpu-id=0
 net-scale-factor=0.0039215697906911373
 onnx-file=yolov8s.pt.onnx
-labelfile-path=/opt/nvidia/deepstream/deepstream-5.1/samples/configs/deepstream-app/DeepStream-Yolo/labels.txt
+labelfile-path=/opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app/DeepStream-Yolo/labels.txt
 model-engine-file=model_b1_gpu0_fp32.engine
 num-detected-classes=80
 ```
