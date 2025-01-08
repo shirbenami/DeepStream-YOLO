@@ -73,6 +73,10 @@ docker run -it --gpus all \
 shir_deepstream7.1:1 /bin/bash
 ```
 or:
+before run: 
+```bash
+xhost +local:docker
+```
 
 ```bash
 docker run --gpus all -it --net=host --privileged -v /home/user1/shir/ssl_project:/workspace/ssl_project -e DISPLAY=$DISPLAY -w /opt/nvidia/deepstream/deepstream-7.1 nvcr.io/nvidia/deepstream:7.1-gc-triton-devel
