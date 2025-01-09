@@ -20,12 +20,10 @@ This project is designed for developers and engineers working with NVIDIA GPUs, 
 ## Step 1: Download the DeepStream Docker Image
 To download the DeepStream Docker image with Triton Inference Server support, run the following command:
 ```bash
-docker pull nvcr.io/nvidia/deepstream:7.1.1-triton
-or
 docker pull nvcr.io/nvidia/deepstream:7.1-gc-triton-devel
 ```
 **Explanation:**
-- This command pulls the DeepStream version 7.1.1 image from NVIDIA's repository.
+- This command pulls the DeepStream version 7.1 image from NVIDIA's repository.
 - The Triton Inference Server is included for enhanced model serving capabilities.
 
 ---
@@ -73,6 +71,7 @@ docker run -it --gpus all \
 shir_deepstream7.1:1 /bin/bash
 ```
 or:
+
 before run: 
 ```bash
 xhost +local:docker
