@@ -351,9 +351,14 @@ sudo rabbitmqctl start_app
 
 ---
 
+
 ## Additional Notes
 - Ensure RabbitMQ is configured correctly for external connections if not running locally.
 - Use secure credentials for production environments.
+- To clean (or purge) messages from a queue in RabbitMQ:
+  ```
+   rabbitmqctl purge_queue test_queue
+  ```
 
 For further details, refer to the [DeepStream Plugin Guide](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvmsgbroker.html).
 
