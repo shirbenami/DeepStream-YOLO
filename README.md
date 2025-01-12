@@ -264,6 +264,7 @@ links:
 https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_docker_containers.html
 https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/9bffad1aea802f6be4419712c0a50f05d6a2d490/bindings#21-base-dependencies
 https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/master
+https://www.fosslinux.com/6339/how-to-install-rabbitmq-server-on-ubuntu-18-04-lts.htm
 
 **End of Guide**
 
