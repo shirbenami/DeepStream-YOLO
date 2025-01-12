@@ -257,6 +257,107 @@ Run "pipeline_nvmconv.py" :
 python3 pipeline_nvmconv.py /workspace/ssl_project/images/cars_cut2.h264
 ```
 
+# Setting Up AMQP Protocol Adapter for DeepStream
+
+This guide provides step-by-step instructions to set up the AMQP protocol adapter for DeepStream using RabbitMQ. Follow the steps carefully to configure RabbitMQ, create users, queues, and integrate with DeepStream.
+
+## Prerequisites
+- RabbitMQ installed and running.
+- Access to RabbitMQ Management Interface (default: http://localhost:15672).
+- Credentials for RabbitMQ (default: guest/guest or user-defined).
+
+---
+
+## Step 1: Install RabbitMQ
+
+### Using a Package Manager
+```bash
+sudo apt-get install rabbitmq-server
+```
+
+### Check RabbitMQ Status
+```bash
+sudo service rabbitmq-server status
+```
+
+### Start RabbitMQ
+```bash
+sudo service rabbitmq-server start
+```
+
+### Enable RabbitMQ Management Plugin
+```bash
+sudo rabbitmq-plugins enable rabbitmq_management
+```
+
+---
+
+## Step 2: Access RabbitMQ Management Interface
+1. Open a browser and navigate to [http://localhost:15672](http://localhost:15672).
+2. Log in using the default credentials (guest/guest) or previously configured credentials.
+
+---
+
+## Step 3: Create a RabbitMQ User and Queue
+
+### Create a New User
+1. Log in to RabbitMQ locally or within the container.
+2. Execute the following commands to add a user and grant necessary permissions:
+
+```bash
+sudo rabbitmqctl add_user myuser mypassword
+sudo rabbitmqctl set_user_tags myuser administrator
+sudo rabbitmqctl set_permissions -p / myuser ".*" ".*" ".*"
+```
+
+### Create a Queue
+1. Go to the **Queues** tab in the RabbitMQ Management Interface.
+2. Add a queue named `test_queue`.
+
+---
+
+## Step 4: Create an Exchange and Bind to Queue
+1. Navigate to the **Exchanges** tab in RabbitMQ Management Interface.
+2. Create or use an existing exchange (e.g., `amq.topic`).
+3. Add a binding to link the `test_queue` with the exchange.
+
+---
+
+## Step 5: Verify Queue and Exchange Setup
+Run the following commands to verify the queue and exchange bindings:
+
+### List Queues
+```bash
+sudo rabbitmqctl list_queues
+```
+
+### List Bindings
+```bash
+sudo rabbitmqctl list_bindings
+```
+
+Expected output:
+```
+Listing bindings:
+exchange    test_queue    queue    test_queue    []
+amq.topic   exchange      test_queue    queue    topicname    []
+```
+
+If the bindings are missing, restart RabbitMQ:
+```bash
+sudo rabbitmqctl stop_app
+sudo rabbitmqctl start_app
+```
+
+---
+
+## Additional Notes
+- Ensure RabbitMQ is configured correctly for external connections if not running locally.
+- Use secure credentials for production environments.
+
+For further details, refer to the [DeepStream Plugin Guide](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvmsgbroker.html).
+
+
 ---
 
 
