@@ -325,6 +325,8 @@ sudo rabbitmqctl set_permissions -p / myuser ".*" ".*" ".*"
 1. Navigate to the **Exchanges** tab in RabbitMQ Management Interface.
 2. Create or use an existing exchange (e.g., `amq.topic`).
 3. Add a binding to link the `test_queue` with the exchange.
+4. In the Routing key write : topicname
+![image](https://github.com/user-attachments/assets/d00b0045-9fa8-45ad-b926-c827b8391989)
 
 ---
 
