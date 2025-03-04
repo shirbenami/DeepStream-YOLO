@@ -19,12 +19,12 @@ code .
 1. Open **VS Code**.
 2. Press **Ctrl+Shift+P** to open the command palette.
 3. Instead of searching for `"Remote-Containers: Attach to Running Container"`, open **Remote Explorer** and focus on **Dev Containers View** as shown below:
+   
 ![image](https://github.com/user-attachments/assets/4965783b-9129-49d6-8620-105223f82303)
-![image](https://github.com/user-attachments/assets/9c8fbf6b-f3ff-4605-b880-a3786b195b7f)
 
-   ![Remote Explorer](image.png)
+5. Select your container (`shir:3` or the relevant container).
 
-4. Select your container (`shir:3` or the relevant container).
+   ![image](https://github.com/user-attachments/assets/9c8fbf6b-f3ff-4605-b880-a3786b195b7f)
 
 ## Step 4: Open Your Project Folder
 1. In **VS Code**, go to **File > Open Folder**.
