@@ -24,7 +24,8 @@ code .
 
 5. Select your container (`shir:3` or the relevant container).
 
-   ![image](https://github.com/user-attachments/assets/9c8fbf6b-f3ff-4605-b880-a3786b195b7f)
+![image2](https://github.com/user-attachments/assets/09d6e485-2e80-4f09-ab91-001484a2a8ed)
+
 
 ## Step 4: Open Your Project Folder
 1. In **VS Code**, go to **File > Open Folder**.
