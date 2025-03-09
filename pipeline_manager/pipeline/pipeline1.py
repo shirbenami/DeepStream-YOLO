@@ -31,6 +31,7 @@ def run_pipeline():
     print("Creating Pipeline \n ")
 
     elements = create_pipeline_elements()
+    configure_pipeline_elements(elements)
     add_elements_to_pipeline(elements["pipeline"], elements)  
     link_pipeline_elements(elements)
     start_pipeline_loop(elements)

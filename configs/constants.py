@@ -18,12 +18,12 @@ MUXER_OUTPUT_HEIGHT = 1080
 MUXER_BATCH_TIMEOUT_USEC = 33000
 
 # Input and Configuration Paths
-INPUT_FILE = None  # Set dynamically
+INPUT_FILE = "/workspace/deepstream/deepstream_project/data/images/cars_cut2.h264"
 SCHEMA_TYPE = 0
-PROTO_LIB = None
+PROTO_LIB = "/opt/nvidia/deepstream/deepstream-7.1/lib/libnvds_amqp_proto.so"
 CONN_STR="localhost;5672;guest"
 CFG_FILE = "/workspace/deepstream/deepstream_project/configs/cfg_amqp.txt"
-TOPIC = None
+TOPIC = "topicname"
 NO_DISPLAY = False
 
 # Inference Configuration Files

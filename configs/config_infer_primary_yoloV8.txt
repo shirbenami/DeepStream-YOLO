@@ -7,7 +7,7 @@ model-color-format=0
 #yolo8-pre model
 onnx-file=/opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app/DeepStream-Yolo/yolov8s.pt.onnx
 labelfile-path=/opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app/DeepStream-Yolo/labels.txt
-model-engine-file=model_b1_gpu0_fp32.engine
+model-engine-file=/workspace/deepstream/deepstream_project/data/models/model_b1_gpu0_fp32.engine
 num-detected-classes=80
 
 

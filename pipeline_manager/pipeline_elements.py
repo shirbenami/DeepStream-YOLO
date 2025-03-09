@@ -11,6 +11,9 @@ from gi.repository import GLib, Gst
 from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
 
 def create_pipeline_elements():
+
+    print("create pipeline elements...")
+
     pipeline = Gst.Pipeline()
 
     source = Gst.ElementFactory.make("filesrc", "file-source")
@@ -48,8 +51,10 @@ def create_pipeline_elements():
     
 
 def configure_pipeline_elements(elements):
+
     """Configures properties for each pipeline element."""
-    print("Configuring Pipeline Properties...")
+
+    print("Configuring Pipeline Properties...\n")
 
     elements["source"].set_property('location', INPUT_FILE)
     elements["streammux"].set_property('width', MUXER_OUTPUT_WIDTH)
@@ -63,7 +68,7 @@ def configure_pipeline_elements(elements):
     elements["msgbroker"].set_property('conn-str', CONN_STR)
     if CFG_FILE is not None:
         elements["msgbroker"].set_property('config', CFG_FILE)
-        print("Set property config")
+        #print("Set property config")
     if TOPIC is not None:
         elements["msgbroker"].set_property('topic', TOPIC)
     elements["msgbroker"].set_property('sync', False)
@@ -72,6 +77,7 @@ def configure_pipeline_elements(elements):
 
 def add_elements_to_pipeline(pipeline, elements):
     """Adds all created elements to the GStreamer pipeline."""
+
     print("Adding elements to the Pipeline...\n")
     
     pipeline.add(elements["source"])
@@ -91,6 +97,7 @@ def add_elements_to_pipeline(pipeline, elements):
 
 def link_pipeline_elements(elements):
     """Links all elements in the pipeline."""
+
     print("Linking Pipeline Elements...")
 
     elements["source"].link(elements["h264parser"])
@@ -127,6 +134,7 @@ def link_pipeline_elements(elements):
 
 def start_pipeline_loop(elements):
     """Starts the pipeline and runs the main loop."""
+    
     print("Starting Pipeline...")
     
     loop = GLib.MainLoop()

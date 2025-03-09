@@ -1,4 +1,5 @@
 import pyds
+from configs.constants import MAX_TIME_STAMP_LEN
 
 def generate_event_msg_meta(data, class_id):
     meta = pyds.NvDsEventMsgMeta.cast(data)

@@ -1,7 +1,7 @@
 import pyds
 from gi.repository import Gst
-from configs.constants import PGIE_CLASS_ID_PERSON,PGIE_CLASS_ID_BICYCLE,PGIE_CLASS_ID_CAR,PGIE_CLASS_ID_MOTORCYCLE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_BUS,PGIE_CLASS_ID_TRAIN,PGIE_CLASS_ID_TRUCK
-
+from configs.constants import PGIE_CLASS_ID_PERSON,PGIE_CLASSES_STR,CLASS_NAMES,PGIE_CLASS_ID_BICYCLE,PGIE_CLASS_ID_CAR,PGIE_CLASS_ID_MOTORCYCLE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_BUS,PGIE_CLASS_ID_TRAIN,PGIE_CLASS_ID_TRUCK
+from pipeline_manager.event_metadata import generate_event_msg_meta
 
 # osd_sink_pad_buffer_probe  will extract metadata received on OSD sink pad
 # and update params for drawing rectangle, object information etc.
@@ -72,7 +72,7 @@ def osd_sink_pad_buffer_probe(pad, info, u_data):
 
             # Set display_text. Any existing display_text string will be
             # freed by the bindings module.
-            txt_params.display_text = pgie_classes_str[obj_meta.class_id]
+            txt_params.display_text = PGIE_CLASSES_STR[obj_meta.class_id]
 
             obj_counter[obj_meta.class_id] += 1
 
