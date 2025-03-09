@@ -1,0 +1,13 @@
+[message-broker]
+hostname = localhost
+#hostname = 172.17.0.2
+#username = myuser
+#password = mypassword
+username=guest
+password=guest
+port = 5672
+exchange = amq.topic
+topic = topicname
+amqp-framesize = 131072
+#routing_key=topicname
+

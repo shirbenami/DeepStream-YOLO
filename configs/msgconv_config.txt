@@ -1,0 +1,6 @@
+
+[sensor0]
+enable=1
+type=Camera
+id=CAMERA_ID
+
