@@ -83,7 +83,7 @@ docker run --gpus all -it --net=host --privileged -v /home/user1/shir/ssl_projec
 
 **or**
 ```bash
-docker run --gpus all -it --net=host --privileged -v /home/user/shir/deepstream:/workspace/ssl_project -e DISPLAY=$DISPLAY shir:4
+docker run --gpus all -it --net=host --privileged -v /home/user/shir/deepstream:/workspace/deepstream -e DISPLAY=$DISPLAY shir:4
 ```
 
 **Explanation:**
