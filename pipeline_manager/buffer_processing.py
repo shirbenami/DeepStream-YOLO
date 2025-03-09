@@ -1,5 +1,7 @@
 import pyds
 from gi.repository import Gst
+from configs.constants import PGIE_CLASS_ID_PERSON,PGIE_CLASS_ID_BICYCLE,PGIE_CLASS_ID_CAR,PGIE_CLASS_ID_MOTORCYCLE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_BUS,PGIE_CLASS_ID_TRAIN,PGIE_CLASS_ID_TRUCK
+
 
 # osd_sink_pad_buffer_probe  will extract metadata received on OSD sink pad
 # and update params for drawing rectangle, object information etc.

@@ -4,9 +4,11 @@ import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
 from common.platform_info import PlatformInfo
-
-PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/config_infer_primary_yoloV8.txt"
-MSCONV_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/msgconv_config.txt"
+from common.bus_call import bus_call
+from common.utils import long_to_uint64
+from configs.constants import TOPIC,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, INPUT_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
+from gi.repository import GLib, Gst
+from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
 
 def create_pipeline_elements():
     pipeline = Gst.Pipeline()
@@ -30,26 +32,119 @@ def create_pipeline_elements():
     else:
         sink = Gst.ElementFactory.make("nveglglessink", "nvvideo-renderer")
 
-    if not all([source, h264parser, decoder, streammux, pgie, nvvidconv, nvosd, tee, queue1, queue2, msgconv, msgbroker, sink]):
-        sys.stderr.write(" Failed to create pipeline elements\n")
+    elements = {
+        "pipeline": pipeline, "source": source, "h264parser": h264parser, "decoder": decoder,
+        "streammux": streammux, "pgie": pgie, "nvvidconv": nvvidconv, "nvosd": nvosd,
+        "msgconv": msgconv, "msgbroker": msgbroker, "tee": tee, "queue1": queue1,
+        "queue2": queue2, "sink": sink
+    }
 
-    source.set_property('location', "/workspace/deepstream/deepstream_project/data/videos/input.h264")
-    streammux.set_property('width', 1920)
-    streammux.set_property('height', 1080)
-    streammux.set_property('batch-size', 1)
-    pgie.set_property('config-file-path', PGIE_CONFIG_FILE)
-    msgconv.set_property('config', MSCONV_CONFIG_FILE)
+    # Check if all elements were created successfully
+    for name, elem in elements.items():
+        if not elem:
+            sys.stderr.write(f"❌ Unable to create {name}\n")
+    
+    return elements
+    
 
-    pipeline.add(source, h264parser, decoder, streammux, pgie, nvvidconv, nvosd, tee, queue1, queue2, msgconv, msgbroker, sink)
+def configure_pipeline_elements(elements):
+    """Configures properties for each pipeline element."""
+    print("Configuring Pipeline Properties...")
 
-    source.link(h264parser)
-    h264parser.link(decoder)
-    streammux.link(pgie)
-    pgie.link(nvvidconv)
-    nvvidconv.link(nvosd)
-    nvosd.link(tee)
-    queue1.link(msgconv)
-    msgconv.link(msgbroker)
-    queue2.link(sink)
+    elements["source"].set_property('location', INPUT_FILE)
+    elements["streammux"].set_property('width', MUXER_OUTPUT_WIDTH)
+    elements["streammux"].set_property('height', MUXER_OUTPUT_HEIGHT)
+    elements["streammux"].set_property('batch-size', 1)
+    elements["streammux"].set_property('batched-push-timeout', MUXER_BATCH_TIMEOUT_USEC)
+    elements["pgie"].set_property('config-file-path', PGIE_CONFIG_FILE)
+    elements["msgconv"].set_property('config', MSCONV_CONFIG_FILE)
+    elements["msgconv"].set_property('payload-type', SCHEMA_TYPE)
+    elements["msgbroker"].set_property('proto-lib', PROTO_LIB)
+    elements["msgbroker"].set_property('conn-str', CONN_STR)
+    if CFG_FILE is not None:
+        elements["msgbroker"].set_property('config', CFG_FILE)
+        print("Set property config")
+    if TOPIC is not None:
+        elements["msgbroker"].set_property('topic', TOPIC)
+    elements["msgbroker"].set_property('sync', False)
 
-    return pipeline, {"nvosd": nvosd}
+
+
+def add_elements_to_pipeline(pipeline, elements):
+    """Adds all created elements to the GStreamer pipeline."""
+    print("Adding elements to the Pipeline...\n")
+    
+    pipeline.add(elements["source"])
+    pipeline.add(elements["h264parser"])
+    pipeline.add(elements["decoder"])
+    pipeline.add(elements["streammux"])
+    pipeline.add(elements["pgie"])
+    pipeline.add(elements["nvvidconv"])
+    pipeline.add(elements["nvosd"])
+    pipeline.add(elements["tee"])
+    pipeline.add(elements["queue1"])
+    pipeline.add(elements["queue2"])
+    pipeline.add(elements["msgconv"])
+    pipeline.add(elements["msgbroker"])
+    pipeline.add(elements["sink"])
+
+
+def link_pipeline_elements(elements):
+    """Links all elements in the pipeline."""
+    print("Linking Pipeline Elements...")
+
+    elements["source"].link(elements["h264parser"])
+    elements["h264parser"].link(elements["decoder"])
+
+    sinkpad = elements["streammux"].request_pad_simple("sink_0")
+    if not sinkpad:
+        sys.stderr.write("❌ Unable to get the sink pad of streammux\n")
+
+    srcpad = elements["decoder"].get_static_pad("src")
+    if not srcpad:
+        sys.stderr.write("❌ Unable to get source pad of decoder\n")
+    
+    srcpad.link(sinkpad)
+
+    elements["streammux"].link(elements["pgie"])
+    elements["pgie"].link(elements["nvvidconv"])
+    elements["nvvidconv"].link(elements["nvosd"])
+    elements["nvosd"].link(elements["tee"])
+
+    elements["queue1"].link(elements["msgconv"])
+    elements["msgconv"].link(elements["msgbroker"])
+    elements["queue2"].link(elements["sink"])
+
+    tee_msg_pad = elements["tee"].request_pad_simple('src_%u')
+    tee_render_pad = elements["tee"].request_pad_simple("src_%u")
+
+    if not tee_msg_pad or not tee_render_pad:
+        sys.stderr.write("❌ Unable to get request pads for tee\n")
+
+    tee_msg_pad.link(elements["queue1"].get_static_pad("sink"))
+    tee_render_pad.link(elements["queue2"].get_static_pad("sink"))
+
+
+def start_pipeline_loop(elements):
+    """Starts the pipeline and runs the main loop."""
+    print("Starting Pipeline...")
+    
+    loop = GLib.MainLoop()
+    bus = elements["pipeline"].get_bus()
+    bus.add_signal_watch()
+    bus.connect("message", bus_call, loop)
+
+    osdsinkpad = elements["nvosd"].get_static_pad("sink")
+    if not osdsinkpad:
+        sys.stderr.write("❌ Unable to get sink pad of nvosd\n")
+
+    osdsinkpad.add_probe(Gst.PadProbeType.BUFFER, osd_sink_pad_buffer_probe, 0)
+
+    elements["pipeline"].set_state(Gst.State.PLAYING)
+
+    try:
+        loop.run()
+    except:
+        pass
+
+    elements["pipeline"].set_state(Gst.State.NULL)
