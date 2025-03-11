@@ -13,16 +13,8 @@ from pipeline_manager.event_metadata import generate_event_msg_meta
 def osd_sink_pad_buffer_probe(pad, info, u_data):
     frame_number = 0
     # Intiallizing object counter with 0.
-    obj_counter = {
-        PGIE_CLASS_ID_PERSON: 0,
-        PGIE_CLASS_ID_BICYCLE: 0,
-        PGIE_CLASS_ID_CAR: 0,
-        PGIE_CLASS_ID_MOTORCYCLE: 0,
-        PGIE_CLASS_ID_AIRPLANE: 0,
-        PGIE_CLASS_ID_BUS: 0,
-        PGIE_CLASS_ID_TRAIN: 0,
-        PGIE_CLASS_ID_TRUCK: 0
-    }
+    
+    obj_counter = {i: 0 for i in range(len(PGIE_CLASSES_STR))}
 
     gst_buffer = info.get_buffer()
     if not gst_buffer:

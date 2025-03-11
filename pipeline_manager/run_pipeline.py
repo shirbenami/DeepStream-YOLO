@@ -3,7 +3,8 @@ import sys
 import os
 import sys
 sys.path.append('/workspace/deepstream/deepstream_project')
-
+from configs.constants import TOPIC,OUTPUT_FOLDER,INPUT_FOLDER, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
+import glob
 
 
 PIPELINE_FOLDER = "pipeline_manager/pipeline"
@@ -45,9 +46,34 @@ def select_and_run_pipeline(args):
         print(f"❌ Error: Could not find module {PIPELINE_MODULE}.{selected_pipeline}")
         print(e)
         sys.exit(1)
+
+    image_files = glob.glob(os.path.join(INPUT_FOLDER, "*.jpg")) + \
+              glob.glob(os.path.join(INPUT_FOLDER, "*.jpeg")) + \
+              glob.glob(os.path.join(INPUT_FOLDER, "*.png"))
+
+    if not image_files:
+        print("❌ not found any images in", INPUT_FOLDER)
+        exit(1)
+
+    for image_path in image_files:
+        print(f"🔄 processing image: {image_path}")
+    
+
+        input_filename = os.path.basename(image_path)
+        output_filename = os.path.join(OUTPUT_FOLDER, input_filename)
+        if hasattr(pipeline_module, "run_pipeline"):
+            pipeline_module.run_pipeline(image_path, output_filename)
+        else:
+            print(f"❌ {selected_pipeline} does not contain a function named run_pipeline()")
+            sys.exit(1)
         
+    
+    
+    
+    """
     if hasattr(pipeline_module, "run_pipeline"):
         pipeline_module.run_pipeline()
     else:
         print(f"❌ {selected_pipeline} does not contain a function named run_pipeline()")
         sys.exit(1)
+    """
