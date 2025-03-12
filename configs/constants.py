@@ -20,8 +20,9 @@ MUXER_BATCH_TIMEOUT_USEC = 50000
 # Input and Configuration Paths
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/videos/cars_cut2.h264" #video file
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/images/cars.jpg" #image file
-INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/images/" # folder of images
-#INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
+#INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/images/" # folder of images
+INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
+
 
 SCHEMA_TYPE = 0
 PROTO_LIB = "/opt/nvidia/deepstream/deepstream-7.1/lib/libnvds_amqp_proto.so"
@@ -34,6 +35,8 @@ OUTPUT_FOLDER = "/workspace/deepstream/deepstream_project/output/"
 # Inference Configuration Files
 PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/config_infer_primary_yoloV8.txt"
 MSCONV_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/msgconv_config.txt"
+PREPROCESS_CONFIG = "/workspace/deepstream/deepstream_project/configs/nvdspreprocess_config.txt"
+
 
 # Class names list
 PGIE_CLASSES_STR = [

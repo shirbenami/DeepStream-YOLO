@@ -4,18 +4,43 @@ sys.path.append('/opt/nvidia/deepstream/deepstream-7.1/sources/deepstream_python
 import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import GLib, Gst
+import sys
 from optparse import OptionParser
 from common.platform_info import PlatformInfo
 from common.bus_call import bus_call
 from common.utils import long_to_uint64
 import pyds
 import json
+from old.pipeline_elements import create_pipeline_elements, configure_pipeline_elements, add_elements_to_pipeline,link_pipeline_elements, start_pipeline_loop
 from pipeline_manager.arg_parser import parse_args
-from configs.constants import TOPIC,OUTPUT_FOLDER,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
+from configs.constants import PREPROCESS_CONFIG,TOPIC,OUTPUT_FOLDER,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
 #from pipeline_manager.pipeline_elements import create_pipeline_elements, configure_pipeline_elements, add_elements_to_pipeline, link_pipeline_elements,start_pipeline_loop
-from gi.repository import GLib, Gst
 from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
 import os
+
+def run_pipeline():
+    platform_info = PlatformInfo()
+    Gst.init(None)
+    print("🚀 Running Pipeline")
+
+    # Deprecated: following meta_copy_func and meta_free_func
+    # have been moved to the binding as event_msg_meta_copy_func()
+    # and event_msg_meta_release_func() respectively.
+    # Hence, registering and unsetting these callbacks in not needed
+    # anymore. Please extend the above functions as necessary instead.
+    # # registering callbacks
+    # pyds.register_user_copyfunc(meta_copy_func)
+    # pyds.register_user_releasefunc(meta_free_func)
+
+    print("Creating Pipeline \n ")
+
+    elements = create_pipeline_elements()
+    configure_pipeline_elements(elements)
+    add_elements_to_pipeline(elements["pipeline"], elements)  
+    link_pipeline_elements(elements)
+    start_pipeline_loop(elements)
+
+
 
 #Create a DOT file
 # dot_output_folder = "/workspace/deepstream/deepstream_project/output/dot"
@@ -51,7 +76,9 @@ def create_pipeline_elements(image_path):
         parser = Gst.ElementFactory.make("h264parse", "h264-parser")
 
     decoder = Gst.ElementFactory.make("nvv4l2decoder", "nvv4l2-decoder")
+
     streammux = Gst.ElementFactory.make("nvstreammux", "Stream-muxer")
+    nvdspreprocess = Gst.ElementFactory.make("nvdspreprocess", "preprocess")
     pgie = Gst.ElementFactory.make("nvinfer", "primary-inference")
     nvvidconv = Gst.ElementFactory.make("nvvideoconvert", "convertor")
     nvosd = Gst.ElementFactory.make("nvdsosd", "onscreendisplay")
@@ -82,14 +109,14 @@ def create_pipeline_elements(image_path):
     
     if is_image:
         elements = {
-        "pipeline": pipeline, "source": source, "parser": parser, "decoder": decoder,
+        "pipeline": pipeline, "source": source, "parser": parser, "decoder": decoder, "nvdspreprocess":nvdspreprocess,
         "streammux": streammux, "pgie": pgie, "nvvidconv": nvvidconv, "nvosd": nvosd,
         "msgconv": msgconv, "msgbroker": msgbroker, "tee": tee, "queue1": queue1,
         "queue2": queue2,"queue3": queue3,  "sink": sink,"nvvidconv_output":nvvidconv_output, "enc": enc, "filesink":filesink
     }
     else:
         elements = {
-        "pipeline": pipeline, "source": source, "parser": parser, "decoder": decoder,
+        "pipeline": pipeline, "source": source, "parser": parser, "decoder": decoder,"nvdspreprocess":nvdspreprocess,
         "streammux": streammux, "pgie": pgie, "nvvidconv": nvvidconv, "nvosd": nvosd,
         "msgconv": msgconv, "msgbroker": msgbroker, "tee": tee, "queue1": queue1,
         "queue2": queue2,"queue3": queue3,  "sink": sink,"nvvidconv_output":nvvidconv_output, "enc": enc,"muxer":muxer, "filesink":filesink
@@ -112,6 +139,7 @@ def configure_pipeline_elements(elements,image_path,output_filename):
     print("Configuring Pipeline Properties...\n")
 
     elements["source"].set_property('location', image_path)
+    elements["nvdspreprocess"].set_property("config-file", PREPROCESS_CONFIG)
     elements["streammux"].set_property('width', MUXER_OUTPUT_WIDTH)
     elements["streammux"].set_property('height', MUXER_OUTPUT_HEIGHT)
     elements["streammux"].set_property('batch-size', 1)
@@ -142,6 +170,7 @@ def add_elements_to_pipeline(pipeline, elements,image_path,output_filename):
     pipeline.add(elements["parser"])
     pipeline.add(elements["decoder"])
     pipeline.add(elements["streammux"])
+    pipeline.add(elements["nvdspreprocess"])
     pipeline.add(elements["pgie"])
     pipeline.add(elements["nvvidconv"])
     pipeline.add(elements["nvosd"])
@@ -177,7 +206,8 @@ def link_pipeline_elements(elements,image_path,output_filename):
     
     srcpad.link(sinkpad)
 
-    elements["streammux"].link(elements["pgie"])
+    elements["streammux"].link(elements["nvdspreprocess"])
+    elements["nvdspreprocess"].link(elements["pgie"])
     elements["pgie"].link(elements["nvvidconv"])
     elements["nvvidconv"].link(elements["nvosd"])
     elements["nvosd"].link(elements["tee"])
@@ -223,8 +253,10 @@ def start_pipeline_loop(elements,image_path,output_filename):
 
         if msg_type == Gst.MessageType.EOS:
             print("End of Stream reached. Close the window to exit.")
-            elements["pipeline"].set_state(Gst.State.PAUSED)  # Keep the image displayed
-            #loop.quit()
+            if Is_image:
+                elements["pipeline"].set_state(Gst.State.PAUSED)  # Keep the image displayed
+            else:
+                loop.quit()
         elif msg_type == Gst.MessageType.ERROR:
             err, debug = message.parse_error()
             if "Output window was closed" in str(err):
@@ -235,7 +267,8 @@ def start_pipeline_loop(elements,image_path,output_filename):
         return True
 
     # Attach bus watch to wait for user to close the display
-    bus.add_watch(0, on_message, loop)
+    if Is_image:
+        bus.add_watch(0, on_message, loop)
 
     osdsinkpad = elements["nvosd"].get_static_pad("sink")
     if not osdsinkpad:
