@@ -17,44 +17,33 @@ This project is designed for developers and engineers working with NVIDIA GPUs, 
 
 ---
 
+## Pipeline Structure
+![1](https://github.com/user-attachments/assets/d3f68bf7-8b98-4169-a7b1-cf5b2732f06e)
+![2](https://github.com/user-attachments/assets/e5f4a8aa-6e7e-4aa5-8645-528fbb52b0f8)
+![3](https://github.com/user-attachments/assets/076b1e76-f587-4094-9f50-09bb788df238)
+![4](https://github.com/user-attachments/assets/5a78d909-2a36-4de2-a1b5-be39300914dd)
+
+The pipeline follows these key stages:
+
+1. **Source Input (GstFileSrc)** - Loads an image or video from a file located in:
+2. **JPEG Parsing (GstJpegParse)** - Parses JPEG image data for processing.
+3. **Decoder (nvv4l2decoder)** - It is decoded using NVIDIA NVDEC.
+4. **Stream Muxing (GstNvStreamMux)** - Merges multiple streams into a batch for efficient GPU processing.
+5. **Inference Engine (GstNvInfer)** - Runs object detection using a deep learning model (YOLOv8) with configurations:
+   - Config file: `/workspace/deepstream/deepstream_project/configs/config_infer_primary_yoloV8.txt`
+   - Engine file: `/workspace/deepstream/deepstream_project/data/models/model_b1_gpu0_fp32.engine`
+6. **Video Conversion (Gstnvideoconvert)** - Converts video format for further processing.
+7. **On-Screen Display (GstNvDsOsd)** - Overlays bounding boxes and object labels on the video.
+8. **Stream Splitting (GstTee)** - Divides the processed stream into three outputs:
+   - **Rendering output**
+   - **Message conversion for metadata transmission**
+   - **Processed data streaming**
+9. **Message Conversion & Transmission (GstNvMsgConv & GstNvMsgBroker)** - Converts metadata and sends it via AMQP with GstNvMsgBroker, GstNvMsgConv.
+
+10. **File Output (GstFileSink)** - Saves the images/output in a directory.
 
 
-## Saving Changes to the Container
-Once you’ve made changes inside the container, you can save them by creating a new Docker image.
-
-### 1. Find the Container ID or Name
-To list all running containers, use:
-```bash
-docker ps
-```
-
-### 2. Save the Container as a New Image
-Use the `docker commit` command to save the container's current state:
-```bash
-docker commit <container_id_or_name> <new_image_name>:<tag>
-```
-**Example:**
-```bash
-docker commit shir_container shir_with_onnx_installed
-```
-- `shir_container` – The container you were working on.
-- `shir_with_onnx_installed` – The name of the new image that includes ONNX installation.
-
-### 3. Verify the New Image
-Check if the new image was created successfully:
-```bash
-docker images
-```
-
-### 4. Exit the Running Container
-If you are still inside the container, exit by typing:
-```bash
-exit
-```
-
----
-
-## Step 2: Running the DeepStream Docker Container
+## Running the DeepStream Docker Container
 To start the container and access the DeepStream workspace, use the following command:
 
 before run: 
@@ -67,7 +56,7 @@ run:
 docker run --gpus all -it --net=host --privileged -v /home/user/shir/deepstream:/workspace/deepstream -e DISPLAY=$DISPLAY shir:4
 ```
 
-## Step 3: Verify the DeepStream Environment
+## Verify the DeepStream Environment
 ### 1. Check NVIDIA GPU
 Run the following inside the container:
 ```bash
@@ -84,8 +73,7 @@ deepstream-app --version-all
 
 ---
 
-
-# Guide for train YOLO Model
+## Guide for train YOLO Model
 
 ### 1. Project Setup
 
@@ -99,8 +87,7 @@ python3 main.py -i /workspace/deepstream/images/cars_cut2.h264 -p '/opt/nvidia/d
 
 ```
 
-
-# Setting Up AMQP Protocol Adapter for DeepStream
+## Setting Up AMQP Protocol Adapter for DeepStream
 
 This guide provides step-by-step instructions to set up the AMQP protocol adapter for DeepStream using RabbitMQ. Follow the steps carefully to configure RabbitMQ, create users, queues, and integrate with DeepStream.
 
@@ -209,7 +196,38 @@ For further details, refer to the [DeepStream Plugin Guide](https://docs.nvidia.
 
 
 ---
+## Saving Changes to the Container
+Once you’ve made changes inside the container, you can save them by creating a new Docker image.
 
+### 1. Find the Container ID or Name
+To list all running containers, use:
+```bash
+docker ps
+```
+
+### 2. Save the Container as a New Image
+Use the `docker commit` command to save the container's current state:
+```bash
+docker commit <container_id_or_name> <new_image_name>:<tag>
+```
+**Example:**
+```bash
+docker commit shir_container shir_with_onnx_installed
+```
+- `shir_container` – The container you were working on.
+- `shir_with_onnx_installed` – The name of the new image that includes ONNX installation.
+
+### 3. Verify the New Image
+Check if the new image was created successfully:
+```bash
+docker images
+```
+
+### 4. Exit the Running Container
+If you are still inside the container, exit by typing:
+```bash
+exit
+```
 
 links:
 https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_docker_containers.html
