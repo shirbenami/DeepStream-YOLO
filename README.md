@@ -17,16 +17,7 @@ This project is designed for developers and engineers working with NVIDIA GPUs, 
 
 ---
 
-## Step 1: Download the DeepStream Docker Image
-To download the DeepStream Docker image with Triton Inference Server support, run the following command:
-```bash
-docker pull nvcr.io/nvidia/deepstream:7.1-gc-triton-devel
-```
-**Explanation:**
-- This command pulls the DeepStream version 7.1 image from NVIDIA's repository.
-- The Triton Inference Server is included for enhanced model serving capabilities.
 
----
 
 ## Saving Changes to the Container
 Once you’ve made changes inside the container, you can save them by creating a new Docker image.
@@ -65,34 +56,16 @@ exit
 
 ## Step 2: Running the DeepStream Docker Container
 To start the container and access the DeepStream workspace, use the following command:
-```bash
-docker run -it --gpus all \
--v /home/user1/shir/ssl_project:/workspace/ssl_project \
-shir_deepstream7.1:1 /bin/bash
-```
-or:
 
 before run: 
 ```bash
 xhost +local:docker
 ```
+run:
 
-```bash
-docker run --gpus all -it --net=host --privileged -v /home/user1/shir/ssl_project:/workspace/ssl_project -e DISPLAY=$DISPLAY -w /opt/nvidia/deepstream/deepstream-7.1 nvcr.io/nvidia/deepstream:7.1-gc-triton-devel
-```
-
-**or**
 ```bash
 docker run --gpus all -it --net=host --privileged -v /home/user/shir/deepstream:/workspace/deepstream -e DISPLAY=$DISPLAY shir:4
 ```
-
-**Explanation:**
-- `-it` – Interactive mode to allow terminal interaction.
-- `--gpus all` – Grants access to all GPUs on the system.
-- `-v` – Mounts the local directory to the container (`/workspace/ssl_project`).
-- `/bin/bash` – Opens a bash shell inside the container.
-
----
 
 ## Step 3: Verify the DeepStream Environment
 ### 1. Check NVIDIA GPU
@@ -111,156 +84,21 @@ deepstream-app --version-all
 
 ---
 
-## Step 4: Prepare Configuration Files
-### 1. Navigate to Configuration Directory
-Inside the container, go to the DeepStream sample configuration directory:
-```bash
-cd /opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app
-```
-
-### 2. Copy the Sample Configuration File
-Create a copy of the existing configuration file to customize:
-```bash
-cp source1_usb_dec_infer_resnet_int8.txt source1_usb_dec_infer_resnet_int8_copy.txt
-```
-
-### 3. Edit the Configuration File
-Open the copied file for editing:
-```bash
-nano source1_usb_dec_infer_resnet_int8_copy.txt
-```
-
----
-
-## Step 5: Modify the Configuration File
-### 1. Update Input Source
-Replace the `[source0]` section with the following to set the video input:
-```ini
-[source0]
-enable=1
-type=3
-uri=file:///workspace/ssl_project/images/cars_cut.mp4
-num-sources=1
-gpu-id=0
-cudadec-memtype=0
-```
-
-### 2. Update Output Settings
-Replace the `[sink0]` section to configure the output:
-```ini
-[sink0]
-enable=1
-type=3
-container=2  # MP4 container
-codec=1      # H.264 codec
-sync=0
-output-file=/workspace/ssl_project/output/output_video.mp4
-```
-
-### 3. Verify Model Paths
-Ensure the `[primary-gie]` section points to the correct model paths:
-```ini
-[primary-gie]
-enable=1
-model-engine-file=/opt/nvidia/deepstream/deepstream-7.1/samples/models/Primary_Detector/resnet10.engine
-batch-size=1
-bbox-border-color0=1;0;0;1
-bbox-border-color1=0;1;1;1
-config-file=config_infer_primary.txt
-```
-
----
-
-## Step 6: Run the Experiment
-Execute the DeepStream application using the modified configuration file:
-```bash
-deepstream-app -c source1_usb_dec_infer_resnet_int8_copy.txt
-```
-
----
-
-## Step 7: Check the Results
-### 1. Verify the Output File
-After running the experiment, check if the output video is saved:
-```bash
-ls /workspace/ssl_project/output/output_video.mp4
-```
-
-### 2. Play the Output Video
-Use a media player (like VLC) to review the detection results in the video.
-
-
-
----
-
-
 
 # Guide for train YOLO Model
 
 ### 1. Project Setup
 
-*  go to deepstream7.1/sources/ . follow this directions: https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/blob/master/HOWTO.md
-
-* pip3 install this link https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/releases
-
-after this download the Yolo directory:
-
 ```bash
-cd /opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app
-```
-1. Clone the DeepStream-Yolo repository:
-```bash
-git clone https://github.com/NVIDIA-AI-IOT/deepstream_python_apps
-git clone https://github.com/marcoslucianops/DeepStream-Yolo.git
-cd DeepStream-Yolo
-```
-2. Build the custom parser:
-```bash
-cd nvdsinfer_custom_impl_Yolo
-make clean && make
-```
-**If there is an issue:**
-
-modify Makefile:
-```
-CUDA_VER?=12.2
-#ifeq ($(CUDA_VER),)
-#       $(error "CUDA_VER is not set")
-#endif
+cd /opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app/DeepStream-Yolo
 ```
 
-** example of use in : /opt/nvidia/deepstream/deepstream-7.1/sources/deepstream_python_apps/apps
 you can run:
 ```
-python3 deepstream_test_4.py -i /workspace/deepstream/images/cars_cut2.h264 -p '/opt/nvidia/deepstream/deepstream-7.1/lib/libnvds_amqp_proto.so' --conn-str="localhost;5672;guest" -c "cfg_amqp.txt" --topic "topicname"
+python3 main.py -i /workspace/deepstream/images/cars_cut2.h264 -p '/opt/nvidia/deepstream/deepstream-7.1/lib/libnvds_amqp_proto.so' --conn-str="localhost;5672;guest" -c "cfg_amqp.txt" --topic "topicname"
 
 ```
 
-### 3. Configure YOLOv8
-Edit the YOLOv8 configuration file: 
-
-```
-nano config_infer_primary_yoloV8.txt
-```
-
-```
-[property]
-gpu-id=0
-net-scale-factor=0.0039215697906911373
-onnx-file=yolov8s.pt.onnx
-labelfile-path=/opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app/DeepStream-Yolo/labels.txt
-model-engine-file=model_b1_gpu0_fp32.engine
-num-detected-classes=80
-```
-Run application:
-```bash
-deepstream-app -c deepstream_app_config_YOLO8.txt
-```
-
-Run "pipeline_nvmconv.py" :
-```bash
-python3 pipeline_nvmconv.py /workspace/ssl_project/images/cars_cut2.h264
-```
 
 # Setting Up AMQP Protocol Adapter for DeepStream
 
@@ -310,9 +148,9 @@ sudo rabbitmq-plugins enable rabbitmq_management
 2. Execute the following commands to add a user and grant necessary permissions:
 
 ```bash
-sudo rabbitmqctl add_user myuser mypassword
-sudo rabbitmqctl set_user_tags myuser administrator
-sudo rabbitmqctl set_permissions -p / myuser ".*" ".*" ".*"
+rabbitmqctl add_user myuser mypassword
+rabbitmqctl set_user_tags myuser administrator
+rabbitmqctl set_permissions -p / myuser ".*" ".*" ".*"
 ```
 
 ### Create a Queue
@@ -335,12 +173,12 @@ Run the following commands to verify the queue and exchange bindings:
 
 ### List Queues
 ```bash
-sudo rabbitmqctl list_queues
+rabbitmqctl list_queues
 ```
 
 ### List Bindings
 ```bash
-sudo rabbitmqctl list_bindings
+rabbitmqctl list_bindings
 ```
 
 Expected output:
