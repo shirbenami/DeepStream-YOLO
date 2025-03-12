@@ -1,15 +1,39 @@
+
 import sys
 sys.path.append('/opt/nvidia/deepstream/deepstream-7.1/sources/deepstream_python_apps/apps')
 import gi
 gi.require_version('Gst', '1.0')
-from gi.repository import Gst
+from gi.repository import GLib, Gst
+from optparse import OptionParser
 from common.platform_info import PlatformInfo
 from common.bus_call import bus_call
 from common.utils import long_to_uint64
+import pyds
+import json
+from pipeline_manager.arg_parser import parse_args
 from configs.constants import TOPIC,OUTPUT_FOLDER,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
+#from pipeline_manager.pipeline_elements import create_pipeline_elements, configure_pipeline_elements, add_elements_to_pipeline, link_pipeline_elements,start_pipeline_loop
 from gi.repository import GLib, Gst
 from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
 import os
+
+#Create a DOT file
+# dot_output_folder = "/workspace/deepstream/deepstream_project/output/dot"
+#os.makedirs(dot_output_folder, exist_ok=True)  
+#os.environ["GST_DEBUG_DUMP_DOT_DIR"] = dot_output_folder
+
+def run_pipeline(image_path, output_filename):
+    platform_info = PlatformInfo()
+    Gst.init(None)
+    print("🚀 Running Pipeline")
+
+    elements = create_pipeline_elements(image_path)
+    configure_pipeline_elements(elements,image_path,output_filename)
+    add_elements_to_pipeline(elements["pipeline"], elements,image_path,output_filename)  
+    link_pipeline_elements(elements,image_path,output_filename)
+    start_pipeline_loop(elements,image_path,output_filename)
+
+
 
 def create_pipeline_elements(image_path):
 
@@ -18,11 +42,9 @@ def create_pipeline_elements(image_path):
     pipeline = Gst.Pipeline()
 
     # determine if input is an image or video
-
-    file_extension = os.path.splitext(image_path)[1].lower()
-    is_image = file_extension in ['.jpg','.jpeg','.png']
     input_filename = os.path.basename(image_path)  
     source = Gst.ElementFactory.make("filesrc", "file-source")
+    is_image = Is_image(image_path)
     if is_image:
         parser = Gst.ElementFactory.make("jpegparse", "jpeg-parser")
     else:
@@ -37,7 +59,6 @@ def create_pipeline_elements(image_path):
     queue1 = Gst.ElementFactory.make("queue", "nvtee-que1")
     queue2 = Gst.ElementFactory.make("queue", "nvtee-que2")
     queue3 = Gst.ElementFactory.make("queue", "nvtee-que3")
-
     msgconv = Gst.ElementFactory.make("nvmsgconv", "nvmsg-converter")
     msgbroker = Gst.ElementFactory.make("nvmsgbroker", "nvmsg-broker")
 
@@ -106,7 +127,6 @@ def configure_pipeline_elements(elements,image_path,output_filename):
     if TOPIC is not None:
         elements["msgbroker"].set_property('topic', TOPIC)
     elements["msgbroker"].set_property('sync', False)
-
     elements["sink"].set_property("sync",True) #Ensure it syncs with display timing
     elements["sink"].set_property("qos",False) #avoid frame dropping
     elements["filesink"].set_property("location", output_filename)
@@ -134,8 +154,7 @@ def add_elements_to_pipeline(pipeline, elements,image_path,output_filename):
     pipeline.add(elements["sink"])
     pipeline.add(elements["nvvidconv_output"])
     pipeline.add(elements["enc"])
-    file_extension = os.path.splitext(image_path)[1].lower()
-    is_image = file_extension in ['.jpg','.jpeg','.png']
+    is_image = Is_image(image_path)
     if not is_image:
         pipeline.add(elements["muxer"])
     pipeline.add(elements["filesink"])
@@ -162,16 +181,13 @@ def link_pipeline_elements(elements,image_path,output_filename):
     elements["pgie"].link(elements["nvvidconv"])
     elements["nvvidconv"].link(elements["nvosd"])
     elements["nvosd"].link(elements["tee"])
-
     elements["queue1"].link(elements["msgconv"])
     elements["msgconv"].link(elements["msgbroker"])
     elements["queue2"].link(elements["sink"])
-    
     elements["queue3"].link(elements["nvvidconv_output"])
     elements["nvvidconv_output"].link(elements["enc"])
 
-    file_extension = os.path.splitext(image_path)[1].lower()
-    is_image = file_extension in ['.jpg','.jpeg','.png']
+    is_image = Is_image(image_path)
 
     if is_image:
         elements["enc"].link(elements["filesink"])
@@ -183,7 +199,7 @@ def link_pipeline_elements(elements,image_path,output_filename):
     tee_msg_pad = elements["tee"].request_pad_simple('src_%u')
     tee_render_pad = elements["tee"].request_pad_simple("src_%u")
     tee_bbox_pad = elements["tee"].request_pad_simple("src_%u")
-
+עם
 
     if not tee_msg_pad or not tee_render_pad or not tee_bbox_pad:
         sys.stderr.write("❌ Unable to get request pads for tee\n")
@@ -228,6 +244,10 @@ def start_pipeline_loop(elements,image_path,output_filename):
 
     osdsinkpad.add_probe(Gst.PadProbeType.BUFFER, osd_sink_pad_buffer_probe, 0)
 
+
+    # #saving the pipepline as a DOT file with timestamp
+    #Gst.debug_bin_to_dot_file_with_ts(elements["pipeline"], Gst.DebugGraphDetails.ALL, "deepstream_pipeline")
+
     #Start the pipeline
     elements["pipeline"].set_state(Gst.State.PLAYING)
     print("🎥 Displaying image/video... Close the window to exit.")
@@ -241,3 +261,9 @@ def start_pipeline_loop(elements,image_path,output_filename):
 
     elements["pipeline"].set_state(Gst.State.NULL)
     print("✅ Pipeline stopped.")
+
+
+def Is_image(image_path):
+    file_extension = os.path.splitext(image_path)[1].lower()
+    is_image = file_extension in ['.jpg','.jpeg','.png']
+    return is_image

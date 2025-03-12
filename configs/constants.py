@@ -21,6 +21,8 @@ MUXER_BATCH_TIMEOUT_USEC = 50000
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/videos/cars_cut2.h264" #video file
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/images/cars.jpg" #image file
 INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/images/" # folder of images
+#INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
+
 SCHEMA_TYPE = 0
 PROTO_LIB = "/opt/nvidia/deepstream/deepstream-7.1/lib/libnvds_amqp_proto.so"
 CONN_STR="localhost;5672;guest"
