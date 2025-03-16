@@ -19,13 +19,11 @@ This project is designed for developers and engineers working with NVIDIA GPUs, 
 
 ## Pipeline Structure!
 
-
+------------------------------------------------------------------------------------------
 ![newgif](https://github.com/user-attachments/assets/17118b7e-009d-4bf4-b3f5-7d9891526018)
 
 
-
-![gifmaker_me](https://github.com/user-attachments/assets/d95aa3e3-ecb4-48e5-b268-ec09d2a27f93)
-
+------------------------------------------------------------------------------------------
 
 ![1](https://github.com/user-attachments/assets/d3f68bf7-8b98-4169-a7b1-cf5b2732f06e)
 ![2](https://github.com/user-attachments/assets/e5f4a8aa-6e7e-4aa5-8645-528fbb52b0f8)
