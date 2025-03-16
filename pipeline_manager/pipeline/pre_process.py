@@ -18,35 +18,6 @@ from configs.constants import PREPROCESS_CONFIG,TOPIC,OUTPUT_FOLDER,PGIE_CONFIG_
 from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
 import os
 
-def run_pipeline():
-    platform_info = PlatformInfo()
-    Gst.init(None)
-    print("🚀 Running Pipeline")
-
-    # Deprecated: following meta_copy_func and meta_free_func
-    # have been moved to the binding as event_msg_meta_copy_func()
-    # and event_msg_meta_release_func() respectively.
-    # Hence, registering and unsetting these callbacks in not needed
-    # anymore. Please extend the above functions as necessary instead.
-    # # registering callbacks
-    # pyds.register_user_copyfunc(meta_copy_func)
-    # pyds.register_user_releasefunc(meta_free_func)
-
-    print("Creating Pipeline \n ")
-
-    elements = create_pipeline_elements()
-    configure_pipeline_elements(elements)
-    add_elements_to_pipeline(elements["pipeline"], elements)  
-    link_pipeline_elements(elements)
-    start_pipeline_loop(elements)
-
-
-
-#Create a DOT file
-# dot_output_folder = "/workspace/deepstream/deepstream_project/output/dot"
-#os.makedirs(dot_output_folder, exist_ok=True)  
-#os.environ["GST_DEBUG_DUMP_DOT_DIR"] = dot_output_folder
-
 def run_pipeline(image_path, output_filename):
     platform_info = PlatformInfo()
     Gst.init(None)
@@ -59,13 +30,11 @@ def run_pipeline(image_path, output_filename):
     start_pipeline_loop(elements,image_path,output_filename)
 
 
-
 def create_pipeline_elements(image_path):
 
     print("create pipeline elements...")
 
     pipeline = Gst.Pipeline()
-
     # determine if input is an image or video
     input_filename = os.path.basename(image_path)  
     source = Gst.ElementFactory.make("filesrc", "file-source")
@@ -76,7 +45,7 @@ def create_pipeline_elements(image_path):
         parser = Gst.ElementFactory.make("h264parse", "h264-parser")
 
     decoder = Gst.ElementFactory.make("nvv4l2decoder", "nvv4l2-decoder")
-
+    
     streammux = Gst.ElementFactory.make("nvstreammux", "Stream-muxer")
     nvdspreprocess = Gst.ElementFactory.make("nvdspreprocess", "preprocess")
     pgie = Gst.ElementFactory.make("nvinfer", "primary-inference")
@@ -95,7 +64,6 @@ def create_pipeline_elements(image_path):
     else:
         sink = Gst.ElementFactory.make("nveglglessink", "nvvideo-renderer")
     
-
     nvvidconv_output = Gst.ElementFactory.make("nvvideoconvert", "nvvidconv-output")
     if is_image:
         enc = Gst.ElementFactory.make("nvjpegenc", "jpeg-encoder")

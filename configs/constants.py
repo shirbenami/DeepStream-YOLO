@@ -20,8 +20,8 @@ MUXER_BATCH_TIMEOUT_USEC = 50000
 # Input and Configuration Paths
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/videos/cars_cut2.h264" #video file
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/images/cars.jpg" #image file
-#INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/images/" # folder of images
-INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
+INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/images/" # folder of images
+#INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
 
 
 SCHEMA_TYPE = 0
