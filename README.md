@@ -24,14 +24,6 @@ This project is designed for developers and engineers working with NVIDIA GPUs, 
 ![newgif](https://github.com/user-attachments/assets/17118b7e-009d-4bf4-b3f5-7d9891526018)
 ---
 
----
-#### images of the pipeline:
-
-![1](https://github.com/user-attachments/assets/d3f68bf7-8b98-4169-a7b1-cf5b2732f06e)
-![2](https://github.com/user-attachments/assets/e5f4a8aa-6e7e-4aa5-8645-528fbb52b0f8)
-![3](https://github.com/user-attachments/assets/076b1e76-f587-4094-9f50-09bb788df238)
-![4](https://github.com/user-attachments/assets/5a78d909-2a36-4de2-a1b5-be39300914dd)
-
 The pipeline follows these key stages:
 
 1. **Source Input (GstFileSrc)** - Loads an image or video from a file located in:
