@@ -20,9 +20,10 @@ MUXER_BATCH_TIMEOUT_USEC = 50000
 # Input and Configuration Paths
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/videos/cars_cut2.h264" #video file
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/images/cars.jpg" #image file
-INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/images/" # folder of images
-#INPUT_FOLDER = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
 
+INPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/data/images/" # folder of images
+INPUT_FOLDER_VIDEOS = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
+SHARPEN_FOLDER= "/workspace/deepstream/deepstream_project/data/sharpen_images"
 
 SCHEMA_TYPE = 0
 PROTO_LIB = "/opt/nvidia/deepstream/deepstream-7.1/lib/libnvds_amqp_proto.so"
@@ -30,10 +31,21 @@ CONN_STR="localhost;5672;guest"
 CFG_FILE = "/workspace/deepstream/deepstream_project/configs/cfg_amqp.txt"
 TOPIC = "topicname"
 NO_DISPLAY = False
-OUTPUT_FOLDER = "/workspace/deepstream/deepstream_project/output/"
+
+OUTPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/output/images"
+OUTPUT_FOLDER_VIDEOS = "/workspace/deepstream/deepstream_project/output/videos"
+OUTPUT_FOLDER_PREPROCESS= "/workspace/deepstream/deepstream_project/output/preprocess"
+
 
 # Inference Configuration Files
-PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/config_infer_primary_yoloV8.txt"
+
+
+#PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_yoloV8.txt"
+#PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_dior.txt"
+PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_mymodel.txt"
+
+
+
 MSCONV_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/msgconv_config.txt"
 PREPROCESS_CONFIG = "/workspace/deepstream/deepstream_project/configs/nvdspreprocess_config.txt"
 

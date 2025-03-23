@@ -3,7 +3,7 @@ import sys
 import os
 import sys
 sys.path.append('/workspace/deepstream/deepstream_project')
-from configs.constants import TOPIC,OUTPUT_FOLDER,INPUT_FOLDER, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
+from configs.constants import TOPIC,OUTPUT_FOLDER_IMAGES,OUTPUT_FOLDER_PREPROCESS,OUTPUT_FOLDER_VIDEOS,INPUT_FOLDER_IMAGES,INPUT_FOLDER_VIDEOS,SHARPEN_FOLDER, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
 import glob
 from gi.repository import Gst
 
@@ -56,6 +56,25 @@ def select_and_run_pipeline(args):
     selected_pipeline = pipelines[choice]
     print(f"🚀 Executing pipeline: {selected_pipeline}")
 
+    if "pre_process" in selected_pipeline.lower():
+        input_folder = SHARPEN_FOLDER
+        output_folder = OUTPUT_FOLDER_PREPROCESS
+
+    elif "images" in selected_pipeline.lower():
+        input_folder = INPUT_FOLDER_IMAGES
+        output_folder = OUTPUT_FOLDER_IMAGES
+
+    elif "videos" in selected_pipeline.lower():
+        input_folder = INPUT_FOLDER_VIDEOS
+        output_folder = OUTPUT_FOLDER_VIDEOS
+
+
+    else:
+        input_folder= INPUT_FOLDER_IMAGES
+        output_folder = OUTPUT_FOLDER_IMAGES
+
+
+
     # Dynamically import and run the selected pipeline
     try:
         pipeline_module = importlib.import_module(f"{PIPELINE_MODULE}.{selected_pipeline}")
@@ -65,21 +84,21 @@ def select_and_run_pipeline(args):
         sys.exit(1)
 
     # Search for image files in the INPUT_FOLDER (only jpg, jpeg, png ,h264,mp4 formats)
-    image_files = glob.glob(os.path.join(INPUT_FOLDER, "*.jpg")) + \
-              glob.glob(os.path.join(INPUT_FOLDER, "*.jpeg")) + \
-              glob.glob(os.path.join(INPUT_FOLDER, "*.png")) + \
-              glob.glob(os.path.join(INPUT_FOLDER, "*.h264")) + \
-              glob.glob(os.path.join(INPUT_FOLDER, "*.mp4")) 
+    image_files = glob.glob(os.path.join(input_folder, "*.jpg")) + \
+              glob.glob(os.path.join(input_folder, "*.jpeg")) + \
+              glob.glob(os.path.join(input_folder, "*.png")) + \
+              glob.glob(os.path.join(input_folder, "*.h264")) + \
+              glob.glob(os.path.join(input_folder, "*.mp4")) 
 
     if not image_files:
-        print("❌ not found any images in", INPUT_FOLDER)
+        print("❌ not found any images in", input_folder)
         exit(1)
 
     # Process each image file using the selected pipeline
     for image_path in image_files:
         print(f"🔄 processing image: {image_path}")
         input_filename = os.path.basename(image_path)
-        output_filename = os.path.join(OUTPUT_FOLDER, input_filename)
+        output_filename = os.path.join(output_folder, input_filename)
 
         # Check if the selected pipeline has the required function
         if hasattr(pipeline_module, "run_pipeline"):

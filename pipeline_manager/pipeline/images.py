@@ -11,7 +11,7 @@ from common.utils import long_to_uint64
 import pyds
 import json
 from pipeline_manager.arg_parser import parse_args
-from configs.constants import TOPIC,OUTPUT_FOLDER,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
+from configs.constants import TOPIC,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
 #from pipeline_manager.pipeline_elements import create_pipeline_elements, configure_pipeline_elements, add_elements_to_pipeline, link_pipeline_elements,start_pipeline_loop
 from gi.repository import GLib, Gst
 from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
@@ -26,7 +26,6 @@ def run_pipeline(image_path, output_filename):
     platform_info = PlatformInfo()
     Gst.init(None)
     print("🚀 Running Pipeline")
-
     elements = create_pipeline_elements(image_path)
     configure_pipeline_elements(elements,image_path,output_filename)
     add_elements_to_pipeline(elements["pipeline"], elements,image_path,output_filename)  

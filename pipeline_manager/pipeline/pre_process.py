@@ -13,7 +13,7 @@ import pyds
 import json
 from old.pipeline_elements import create_pipeline_elements, configure_pipeline_elements, add_elements_to_pipeline,link_pipeline_elements, start_pipeline_loop
 from pipeline_manager.arg_parser import parse_args
-from configs.constants import PREPROCESS_CONFIG,TOPIC,OUTPUT_FOLDER,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
+from configs.constants import PREPROCESS_CONFIG,TOPIC,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
 #from pipeline_manager.pipeline_elements import create_pipeline_elements, configure_pipeline_elements, add_elements_to_pipeline, link_pipeline_elements,start_pipeline_loop
 from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
 import os
@@ -22,12 +22,12 @@ def run_pipeline(image_path, output_filename):
     platform_info = PlatformInfo()
     Gst.init(None)
     print("🚀 Running Pipeline")
-
     elements = create_pipeline_elements(image_path)
     configure_pipeline_elements(elements,image_path,output_filename)
     add_elements_to_pipeline(elements["pipeline"], elements,image_path,output_filename)  
     link_pipeline_elements(elements,image_path,output_filename)
     start_pipeline_loop(elements,image_path,output_filename)
+
 
 
 def create_pipeline_elements(image_path):
