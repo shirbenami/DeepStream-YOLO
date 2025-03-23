@@ -6,14 +6,13 @@ model-color-format=0
 
 #yolo11-pre model
 #onnx-file=/opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app/DeepStream-Yolo/yolov8s.pt.onnx
-#onnx-file=/workspace/deepstream/deepstream_project/data/models/onnx/yolo11s.pt.onnx
-onnx-file=/workspace/deepstream/deepstream_project/data/models/onnx/best.pt.onnx
+onnx-file=/workspace/deepstream/deepstream_project/data/models/onnx/yolo11s.pt.onnx
 
 
 labelfile-path=/opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app/DeepStream-Yolo/labels.txt
+
 #model-engine-file=/workspace/deepstream/deepstream_project/data/models/TensorRT/model_b1_gpu0_fp32.engine
-#model-engine-file=/workspace/deepstream/deepstream_project/data/models/TensorRT/model_b1_gpu0_fp32_yolo11.engine
-model-engine-file=/workspace/deepstream/deepstream_project/data/models/TensorRT/model_b1_gpu0_fp32_mymodel.engine
+model-engine-file=/workspace/deepstream/deepstream_project/data/models/TensorRT/model_b1_gpu0_fp32_yolo11.engine
 
 
 

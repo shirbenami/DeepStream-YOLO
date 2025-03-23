@@ -57,17 +57,10 @@ def create_pipeline_elements(image_path):
     tee = Gst.ElementFactory.make("tee", "nvsink-tee")
     queue1 = Gst.ElementFactory.make("queue", "nvtee-que1")
     queue2 = Gst.ElementFactory.make("queue", "nvtee-que2")
-    queue3 = Gst.ElementFactory.make("queue", "nvtee-que3")
     msgconv = Gst.ElementFactory.make("nvmsgconv", "nvmsg-converter")
     msgbroker = Gst.ElementFactory.make("nvmsgbroker", "nvmsg-broker")
 
-    platform_info = PlatformInfo()
-    if platform_info.is_integrated_gpu():
-        sink = Gst.ElementFactory.make("nv3dsink", "nv3d-sink")
-    else:
-        sink = Gst.ElementFactory.make("nveglglessink", "nvvideo-renderer")
     
-
     nvvidconv_output = Gst.ElementFactory.make("nvvideoconvert", "nvvidconv-output")
     if is_image:
         enc = Gst.ElementFactory.make("nvjpegenc", "jpeg-encoder")
@@ -84,14 +77,14 @@ def create_pipeline_elements(image_path):
         "pipeline": pipeline, "source": source, "parser": parser, "decoder": decoder,
         "streammux": streammux, "pgie": pgie, "nvvidconv": nvvidconv, "nvosd": nvosd,
         "msgconv": msgconv, "msgbroker": msgbroker, "tee": tee, "queue1": queue1,
-        "queue2": queue2,"queue3": queue3,  "sink": sink,"nvvidconv_output":nvvidconv_output, "enc": enc, "filesink":filesink
+        "queue2": queue2, "nvvidconv_output":nvvidconv_output, "enc": enc, "filesink":filesink
     }
     else:
         elements = {
         "pipeline": pipeline, "source": source, "parser": parser, "decoder": decoder,
         "streammux": streammux, "pgie": pgie, "nvvidconv": nvvidconv, "nvosd": nvosd,
         "msgconv": msgconv, "msgbroker": msgbroker, "tee": tee, "queue1": queue1,
-        "queue2": queue2,"queue3": queue3,  "sink": sink,"nvvidconv_output":nvvidconv_output, "enc": enc,"muxer":muxer, "filesink":filesink
+        "queue2": queue2,"nvvidconv_output":nvvidconv_output, "enc": enc,"muxer":muxer, "filesink":filesink
     }
 
     # Check if all elements were created successfully
@@ -126,8 +119,6 @@ def configure_pipeline_elements(elements,image_path,output_filename):
     if TOPIC is not None:
         elements["msgbroker"].set_property('topic', TOPIC)
     elements["msgbroker"].set_property('sync', False)
-    elements["sink"].set_property("sync",True) #Ensure it syncs with display timing
-    elements["sink"].set_property("qos",False) #avoid frame dropping
     elements["filesink"].set_property("location", output_filename)
     elements["filesink"].set_property("async", False)
     elements["filesink"].set_property("sync", True)
@@ -147,10 +138,8 @@ def add_elements_to_pipeline(pipeline, elements,image_path,output_filename):
     pipeline.add(elements["tee"])
     pipeline.add(elements["queue1"])
     pipeline.add(elements["queue2"])
-    pipeline.add(elements["queue3"])
     pipeline.add(elements["msgconv"])
     pipeline.add(elements["msgbroker"])
-    pipeline.add(elements["sink"])
     pipeline.add(elements["nvvidconv_output"])
     pipeline.add(elements["enc"])
     is_image = Is_image(image_path)
@@ -182,8 +171,7 @@ def link_pipeline_elements(elements,image_path,output_filename):
     elements["nvosd"].link(elements["tee"])
     elements["queue1"].link(elements["msgconv"])
     elements["msgconv"].link(elements["msgbroker"])
-    elements["queue2"].link(elements["sink"])
-    elements["queue3"].link(elements["nvvidconv_output"])
+    elements["queue2"].link(elements["nvvidconv_output"])
     elements["nvvidconv_output"].link(elements["enc"])
 
     is_image = Is_image(image_path)
@@ -204,7 +192,6 @@ def link_pipeline_elements(elements,image_path,output_filename):
 
     tee_msg_pad.link(elements["queue1"].get_static_pad("sink"))
     tee_render_pad.link(elements["queue2"].get_static_pad("sink"))
-    tee_bbox_pad.link(elements["queue3"].get_static_pad("sink"))
 
 def start_pipeline_loop(elements,image_path,output_filename):
     """Starts the pipeline and runs the main loop."""
@@ -213,8 +200,8 @@ def start_pipeline_loop(elements,image_path,output_filename):
     
     loop = GLib.MainLoop()
     bus = elements["pipeline"].get_bus()
-    #bus.add_signal_watch()
-    #bus.connect("message", bus_call, loop)
+    bus.add_signal_watch()
+    bus.connect("message", bus_call, loop)
 
     def on_message(bus, message, loop):
         """Handles messages from the pipeline to keep the display open."""
@@ -223,7 +210,7 @@ def start_pipeline_loop(elements,image_path,output_filename):
         if msg_type == Gst.MessageType.EOS:
             print("End of Stream reached. Close the window to exit.")
             elements["pipeline"].set_state(Gst.State.PAUSED)  # Keep the image displayed
-            #loop.quit()
+            loop.quit()
         elif msg_type == Gst.MessageType.ERROR:
             err, debug = message.parse_error()
             if "Output window was closed" in str(err):
@@ -248,7 +235,7 @@ def start_pipeline_loop(elements,image_path,output_filename):
 
     #Start the pipeline
     elements["pipeline"].set_state(Gst.State.PLAYING)
-    print("🎥 Displaying image/video... Close the window to exit.")
+    #print("🎥 Displaying image/video... Close the window to exit.")
 
     try:
         loop.run()

@@ -40,9 +40,9 @@ OUTPUT_FOLDER_PREPROCESS= "/workspace/deepstream/deepstream_project/output/prepr
 # Inference Configuration Files
 
 
-#PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_yoloV8.txt"
+PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_yoloV8.txt"
 #PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_dior.txt"
-PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_mymodel.txt"
+#PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_mymodel.txt"
 
 
 
