@@ -2,4 +2,6 @@ old/
 data/
 output/
 configs/check.py
+pipeline_manager/__pycache__
+
 
