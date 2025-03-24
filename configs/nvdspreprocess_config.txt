@@ -15,16 +15,16 @@ maintain-aspect-ratio=1
 symmetric-padding=1
     # processing width/height at which image scaled
 
-processing-width=640
+processing-width=1024
 
-processing-height=368
+processing-height=1024
 
 scaling-buf-pool-size=6
 
 tensor-buf-pool-size=6
     # tensor shape based on network-input-order
 
-network-input-shape=12;3;368;640
+network-input-shape=12;3;1024;1024
     # 0=RGB, 1=BGR, 2=GRAY
 
 network-color-format=0

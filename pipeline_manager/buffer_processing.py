@@ -123,7 +123,7 @@ def osd_sink_pad_buffer_probe(pad, info, u_data):
         except StopIteration:
             break
 
-    print("Frame Number =", frame_number, "cars Count =",
-          obj_counter[PGIE_CLASS_ID_CAR], "truck Count =",
-          obj_counter[PGIE_CLASS_ID_TRUCK])
+    #print("Frame Number =", frame_number, "cars Count =",
+    #      obj_counter[PGIE_CLASS_ID_CAR], "truck Count =",
+    #      obj_counter[PGIE_CLASS_ID_TRUCK])
     return Gst.PadProbeReturn.OK

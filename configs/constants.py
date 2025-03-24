@@ -13,15 +13,15 @@ PGIE_CLASS_ID_TRAIN = 6
 PGIE_CLASS_ID_TRUCK = 7
 
 # Muxer properties
-MUXER_OUTPUT_WIDTH = 1920
-MUXER_OUTPUT_HEIGHT = 1080
+MUXER_OUTPUT_WIDTH = 1024
+MUXER_OUTPUT_HEIGHT = 1024
 MUXER_BATCH_TIMEOUT_USEC = 50000
 
 # Input and Configuration Paths
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/videos/cars_cut2.h264" #video file
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/images/cars.jpg" #image file
 
-INPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/data/images/" # folder of images
+INPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/data/AItod_test/images/" # folder of images
 INPUT_FOLDER_VIDEOS = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
 SHARPEN_FOLDER= "/workspace/deepstream/deepstream_project/data/sharpen_images"
 
@@ -39,31 +39,34 @@ OUTPUT_FOLDER_PREPROCESS= "/workspace/deepstream/deepstream_project/output/prepr
 
 # Inference Configuration Files
 
-
-PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_yoloV8.txt"
-#PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_dior.txt"
-#PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_mymodel.txt"
-
-
-
 MSCONV_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/msgconv_config.txt"
 PREPROCESS_CONFIG = "/workspace/deepstream/deepstream_project/configs/nvdspreprocess_config.txt"
 
 
+#PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_yoloV8.txt"
+#PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_dior.txt"
+PGIE_CONFIG_FILE = "/workspace/deepstream/deepstream_project/configs/models/config_infer_primary_mymodel.txt"
+
+
 # Class names list
-PGIE_CLASSES_STR = [
-    "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck",
-    "boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench",
-    "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe",
-    "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard",
-    "sports ball", "kite", "baseball bat", "baseball glove", "skateboard", "surfboard", 
-    "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl",
-    "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza",
-    "donut", "cake", "chair", "couch", "potted plant", "bed", "dining table", "toilet",
-    "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave", "oven",
-    "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear",
-    "hair drier", "toothbrush"
-]
+
+#PGIE_CLASSES_STR = [
+ #   "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck",
+  #  "boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench",
+  #  "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe",
+#    "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard",
+ #   "sports ball", "kite", "baseball bat", "baseball glove", "skateboard", "surfboard", 
+  #  "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl",
+   # "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza",
+#    "donut", "cake", "chair", "couch", "potted plant", "bed", "dining table", "toilet",
+#    "tv", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave", "oven",
+#    "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear",
+ #   "hair drier", "toothbrush"
+#]
+
+
+PGIE_CLASSES_STR = ["car"]
+
 
 # Class dictionary mapping class ID to name
 CLASS_NAMES = {i: PGIE_CLASSES_STR[i] for i in range(len(PGIE_CLASSES_STR))}

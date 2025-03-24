@@ -17,11 +17,16 @@ from configs.constants import PREPROCESS_CONFIG,TOPIC,PGIE_CONFIG_FILE, MSCONV_C
 #from pipeline_manager.pipeline_elements import create_pipeline_elements, configure_pipeline_elements, add_elements_to_pipeline, link_pipeline_elements,start_pipeline_loop
 from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
 import os
+from utils.sharpen import sharpen_image
 
 def run_pipeline(image_path, output_filename):
     platform_info = PlatformInfo()
     Gst.init(None)
     print("🚀 Running Pipeline")
+
+    #sharpen pre-process the image
+    image_path=sharpen_image(image_path)
+    
     elements = create_pipeline_elements(image_path)
     configure_pipeline_elements(elements,image_path,output_filename)
     add_elements_to_pipeline(elements["pipeline"], elements,image_path,output_filename)  
@@ -129,7 +134,7 @@ def add_elements_to_pipeline(pipeline, elements,image_path,output_filename):
     pipeline.add(elements["parser"])
     pipeline.add(elements["decoder"])
     pipeline.add(elements["streammux"])
-    pipeline.add(elements["nvdspreprocess"])
+    #pipeline.add(elements["nvdspreprocess"])
     pipeline.add(elements["pgie"])
     pipeline.add(elements["nvvidconv"])
     pipeline.add(elements["nvosd"])
@@ -163,8 +168,11 @@ def link_pipeline_elements(elements,image_path,output_filename):
     
     srcpad.link(sinkpad)
 
-    elements["streammux"].link(elements["nvdspreprocess"])
-    elements["nvdspreprocess"].link(elements["pgie"])
+    #elements["streammux"].link(elements["nvdspreprocess"])
+    #elements["nvdspreprocess"].link(elements["pgie"])
+    
+    elements["streammux"].link(elements["pgie"])
+
     elements["pgie"].link(elements["nvvidconv"])
     elements["nvvidconv"].link(elements["nvosd"])
     elements["nvosd"].link(elements["tee"])

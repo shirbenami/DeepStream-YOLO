@@ -57,7 +57,8 @@ def select_and_run_pipeline(args):
     print(f"🚀 Executing pipeline: {selected_pipeline}")
 
     if "pre_process" in selected_pipeline.lower():
-        input_folder = SHARPEN_FOLDER
+        #input_folder = SHARPEN_FOLDER
+        input_folder = INPUT_FOLDER_IMAGES
         output_folder = OUTPUT_FOLDER_PREPROCESS
 
     elif "images" in selected_pipeline.lower():
