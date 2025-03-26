@@ -31,6 +31,8 @@ INPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/data/AItod_test/
 INPUT_FOLDER_VIDEOS = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
 SHARPEN_FOLDER= "/workspace/deepstream/deepstream_project/data/sharpen_images"
 
+LABELS_FOLDER = "/workspace/deepstream/deepstream_project/data/AItod_test/labels"
+
 SCHEMA_TYPE = 0
 PROTO_LIB = "/opt/nvidia/deepstream/deepstream-7.1/lib/libnvds_amqp_proto.so"
 CONN_STR="localhost;5672;guest"
@@ -38,11 +40,19 @@ CFG_FILE = "/workspace/deepstream/deepstream_project/configs/cfg_amqp.txt"
 TOPIC = "topicname"
 NO_DISPLAY = False
 
-OUTPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/output/images"
-OUTPUT_FOLDER_VIDEOS = "/workspace/deepstream/deepstream_project/output/videos"
-OUTPUT_FOLDER_PREPROCESS= "/workspace/deepstream/deepstream_project/output/preprocess"
-OUTPUT_FOLDER_JSON = "/workspace/deepstream/deepstream_project/output/json/create_json"
-OUTPUT_FOLDER_ANNOTATED_IMAGES= '/workspace/deepstream/deepstream_project/output/json/annotated_images'
+OUTPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/output/images/images"
+OUTPUT_FOLDER_ANNOTATED_IMAGES= '/workspace/deepstream/deepstream_project/output/images/json/annotated_images'
+OUTPUT_FOLDER_JSON_IMAGES = "/workspace/deepstream/deepstream_project/output/images/json/json_files"
+
+
+OUTPUT_FOLDER_VIDEOS = "/workspace/deepstream/deepstream_project/output/videos/videos"
+OUTPUT_FOLDER_ANNOTATED_VIDEOS= '/workspace/deepstream/deepstream_project/output/videos/json/annotated_videos'
+OUTPUT_FOLDER_JSON_VIDEOS = "/workspace/deepstream/deepstream_project/output/videos/json/json_files"
+
+OUTPUT_FOLDER_PREPROCESS= "/workspace/deepstream/deepstream_project/output/preprocess/preprocess_images"
+OUTPUT_FOLDER_ANNOTATED_PREPROCESS= '/workspace/deepstream/deepstream_project/output/preprocess/json/annotated_preprocess'
+OUTPUT_FOLDER_JSON_PREPROCESS = "/workspace/deepstream/deepstream_project/output/preprocess/json/json_files"
+
 
 # Inference Configuration Files
 

@@ -1,6 +1,6 @@
 import pyds
 from gi.repository import Gst
-from configs.constants import PGIE_CLASS_ID_PERSON,OUTPUT_FOLDER_JSON,PGIE_CLASSES_STR,CLASS_NAMES,PGIE_CLASS_ID_BICYCLE,PGIE_CLASS_ID_CAR,PGIE_CLASS_ID_MOTORCYCLE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_BUS,PGIE_CLASS_ID_TRAIN,PGIE_CLASS_ID_TRUCK
+from configs.constants import PGIE_CLASS_ID_PERSON,OUTPUT_FOLDER_JSON_IMAGES,OUTPUT_FOLDER_JSON_PREPROCESS,OUTPUT_FOLDER_JSON_VIDEOS,PGIE_CLASSES_STR,CLASS_NAMES,PGIE_CLASS_ID_BICYCLE,PGIE_CLASS_ID_CAR,PGIE_CLASS_ID_MOTORCYCLE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_AIRPLANE,PGIE_CLASS_ID_BUS,PGIE_CLASS_ID_TRAIN,PGIE_CLASS_ID_TRUCK
 from pipeline_manager.event_metadata import generate_event_msg_meta
 import json 
 import os 
@@ -62,8 +62,10 @@ def osd_sink_pad_buffer_probe(pad, info, u_data):
 
             # Set display_text. Any existing display_text string will be
             # freed by the bindings module.
-            txt_params.display_text = PGIE_CLASSES_STR[obj_meta.class_id]
-
+            label = PGIE_CLASSES_STR[obj_meta.class_id]
+            confidence = obj_meta.confidence 
+            txt_params.display_text = f"{label} ({confidence:.2f})"
+            
             obj_counter[obj_meta.class_id] += 1
 
             # Font , font-color and font-size
@@ -108,13 +110,15 @@ def osd_sink_pad_buffer_probe(pad, info, u_data):
             },
             "detections": detections
         }
+        
+        # SAVE THE JSON FILES
 
-        os.makedirs(OUTPUT_FOLDER_JSON,exist_ok=True)
-        json_path = os.path.join(OUTPUT_FOLDER_JSON,f"{image_name_no_ext}.json")
-        with open(json_path, "w") as f:
-            json.dump(frame_dict, f, indent=4)
+        #os.makedirs(OUTPUT_FOLDER_JSON_IMAGES,exist_ok=True)
+        #json_path = os.path.join(OUTPUT_FOLDER_JSON_IMAGES,f"{image_name_no_ext}.json")
+        #with open(json_path, "w") as f:
+        #    json.dump(frame_dict, f, indent=4)
 
-        print(f"📄 Saved JSON: {json_path}")
+        #print(f"📄 Saved JSON: {json_path}")
 
 
         

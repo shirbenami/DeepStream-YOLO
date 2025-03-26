@@ -15,7 +15,7 @@ from old.pipeline_elements import create_pipeline_elements, configure_pipeline_e
 from pipeline_manager.arg_parser import parse_args
 from configs.constants import PREPROCESS_CONFIG,TOPIC,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
 #from pipeline_manager.pipeline_elements import create_pipeline_elements, configure_pipeline_elements, add_elements_to_pipeline, link_pipeline_elements,start_pipeline_loop
-from pipeline_manager.buffer_processing_videos import osd_sink_pad_buffer_probe
+from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
 import os
 from utils.sharpen import sharpen_image
 
@@ -26,7 +26,7 @@ def run_pipeline(image_path, output_filename):
 
     #sharpen pre-process the image
     image_path=sharpen_image(image_path)
-    
+
     elements = create_pipeline_elements(image_path)
     configure_pipeline_elements(elements,image_path,output_filename)
     add_elements_to_pipeline(elements["pipeline"], elements,image_path,output_filename)  
@@ -226,15 +226,14 @@ def start_pipeline_loop(elements,image_path,output_filename):
             loop.quit()
         return True
 
-    # Attach bus watch to wait for user to close the display
-    if Is_image:
-        bus.add_watch(0, on_message, loop)
+
+    bus.add_watch(0, on_message, loop)
 
     osdsinkpad = elements["nvosd"].get_static_pad("sink")
     if not osdsinkpad:
         sys.stderr.write("❌ Unable to get sink pad of nvosd\n")
 
-    osdsinkpad.add_probe(Gst.PadProbeType.BUFFER, osd_sink_pad_buffer_probe, 0)
+    osdsinkpad.add_probe(Gst.PadProbeType.BUFFER, osd_sink_pad_buffer_probe, image_path)
 
 
     # #saving the pipepline as a DOT file with timestamp
