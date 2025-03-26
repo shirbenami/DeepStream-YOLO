@@ -5,12 +5,16 @@ MAX_TIME_STAMP_LEN = 32
 # Define class IDs for different objects
 PGIE_CLASS_ID_PERSON = 0
 PGIE_CLASS_ID_BICYCLE = 1
-PGIE_CLASS_ID_CAR = 2
+#PGIE_CLASS_ID_CAR = 2
 PGIE_CLASS_ID_MOTORCYCLE = 3
 PGIE_CLASS_ID_AIRPLANE = 4
 PGIE_CLASS_ID_BUS = 5
 PGIE_CLASS_ID_TRAIN = 6
 PGIE_CLASS_ID_TRUCK = 7
+
+
+PGIE_CLASS_ID_CAR = 0
+
 
 # Muxer properties
 MUXER_OUTPUT_WIDTH = 1024
@@ -22,6 +26,8 @@ MUXER_BATCH_TIMEOUT_USEC = 50000
 #INPUT_FILE = "/workspace/deepstream/deepstream_project/data/images/cars.jpg" #image file
 
 INPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/data/AItod_test/images/" # folder of images
+#INPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/data/AItod_test/5_images/" # folder of images
+
 INPUT_FOLDER_VIDEOS = "/workspace/deepstream/deepstream_project/data/videos_h264/" # folder of videos
 SHARPEN_FOLDER= "/workspace/deepstream/deepstream_project/data/sharpen_images"
 
@@ -35,7 +41,8 @@ NO_DISPLAY = False
 OUTPUT_FOLDER_IMAGES = "/workspace/deepstream/deepstream_project/output/images"
 OUTPUT_FOLDER_VIDEOS = "/workspace/deepstream/deepstream_project/output/videos"
 OUTPUT_FOLDER_PREPROCESS= "/workspace/deepstream/deepstream_project/output/preprocess"
-
+OUTPUT_FOLDER_JSON = "/workspace/deepstream/deepstream_project/output/json/create_json"
+OUTPUT_FOLDER_ANNOTATED_IMAGES= '/workspace/deepstream/deepstream_project/output/json/annotated_images'
 
 # Inference Configuration Files
 

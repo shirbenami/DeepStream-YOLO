@@ -1,6 +1,6 @@
 
 [sensor0]
-enable=1
-type=Camera
-id=CAMERA_ID
+enable=0
+#type=Camera
+#id=CAMERA_ID
 

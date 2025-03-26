@@ -14,7 +14,9 @@ from pipeline_manager.arg_parser import parse_args
 from configs.constants import TOPIC,PGIE_CONFIG_FILE, MSCONV_CONFIG_FILE, MUXER_OUTPUT_WIDTH, MUXER_OUTPUT_HEIGHT, MUXER_BATCH_TIMEOUT_USEC,CONN_STR, SCHEMA_TYPE,PROTO_LIB,CFG_FILE 
 #from pipeline_manager.pipeline_elements import create_pipeline_elements, configure_pipeline_elements, add_elements_to_pipeline, link_pipeline_elements,start_pipeline_loop
 from gi.repository import GLib, Gst
+#from pipeline_manager.buffer_processing_videos import osd_sink_pad_buffer_probe
 from pipeline_manager.buffer_processing import osd_sink_pad_buffer_probe
+
 import os
 
 #Create a DOT file
@@ -111,6 +113,9 @@ def configure_pipeline_elements(elements,image_path,output_filename):
     elements["pgie"].set_property('config-file-path', PGIE_CONFIG_FILE)
     elements["msgconv"].set_property('config', MSCONV_CONFIG_FILE)
     elements["msgconv"].set_property('payload-type', SCHEMA_TYPE)
+    
+    elements["msgconv"].set_property('msg2p-newapi', 1)
+
     elements["msgbroker"].set_property('proto-lib', PROTO_LIB)
     elements["msgbroker"].set_property('conn-str', CONN_STR)
     if CFG_FILE is not None:
@@ -227,7 +232,7 @@ def start_pipeline_loop(elements,image_path,output_filename):
     if not osdsinkpad:
         sys.stderr.write("❌ Unable to get sink pad of nvosd\n")
 
-    osdsinkpad.add_probe(Gst.PadProbeType.BUFFER, osd_sink_pad_buffer_probe, 0)
+    osdsinkpad.add_probe(Gst.PadProbeType.BUFFER, osd_sink_pad_buffer_probe, image_path)
 
 
     # #saving the pipepline as a DOT file with timestamp
