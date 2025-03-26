@@ -33,13 +33,24 @@ The pipeline follows these key stages:
 
 - Run YOLOv11 with DeepStream to detect vehicles in aerial videos or images.
 - The model is trained on the AITOD dataset, suitable for detecting vehicles from drone or satellite imagery.
+- Choose your pipeline type directly from `main.py`, such as:
+  - `images`
+  - `videos`
+  - `pre_process`
+
 - For each frame:
   - Extract all detected objects (bounding box, label, confidence).
-  - Save the annotated frame to an output images.
+  - Save the annotated frame to an output video/images.
   - Send a single RabbitMQ message per frame with all detections.
 - Output stored as:
-  - Annotated images with bounding boxes.
+  - Annotated video with bounding boxes.
   - JSON with metadata per frame.
+
+To build a pipeline, the logic is structured such that:
+- You choose the pipeline type via `main.py`
+- The selected pipeline is implemented in the `pipeline_manager` module.
+- All helper functions used to construct the pipeline (e.g., pre-processing, frame handling) are located inside `pipeline_manager/pipeline/`.
+
 
 ## 🛠️ Requirements
 
