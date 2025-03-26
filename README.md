@@ -1,26 +1,14 @@
-# DeepStream Setup Guide
+# DeepStream Vehicle Detection & Metadata Publisher
+
 
 ## Project Description
-This project provides a comprehensive guide to setting up and running NVIDIA DeepStream with Triton Inference Server for video analytics. The goal is to utilize DeepStream's GPU-accelerated pipelines for video processing, leveraging machine learning models to perform object detection and classification.
+This project uses NVIDIA DeepStream SDK to perform object detection on images and videos using the YOLOv8 model. 
+The model used was trained with **YOLOv11** on the **AITOD dataset**, which is specifically designed for **vehicle detection in aerial imagery**. 
+The pipeline processes one frame at a time, extracts metadata for all detected objects, and publishes a single JSON message per frame to RabbitMQ containing all bounding boxes and labels.
 
-The guide walks through the process of downloading and configuring the DeepStream Docker image, modifying configuration files, and running experiments on video files. By following these steps, users can create a containerized environment capable of processing video streams and outputting results with object detection overlays.
-
-Key highlights include:
-- Downloading the DeepStream Docker image (version 7.1.1 with Triton support)
-- Saving and committing changes to Docker containers
-- Running DeepStream applications in Docker
-- Configuring video input and output parameters
-- Verifying GPU availability and DeepStream environment
-- Running experiments and validating output
-
-This project is designed for developers and engineers working with NVIDIA GPUs, focusing on deploying AI-powered video analytics solutions.
-
----
 
 ## Pipeline Structure
-
 ---
-
 ![newgif](https://github.com/user-attachments/assets/17118b7e-009d-4bf4-b3f5-7d9891526018)
 ---
 
@@ -30,9 +18,7 @@ The pipeline follows these key stages:
 2. **JPEG Parsing (GstJpegParse)** - Parses JPEG image data for processing.
 3. **Decoder (nvv4l2decoder)** - It is decoded using NVIDIA NVDEC.
 4. **Stream Muxing (GstNvStreamMux)** - Merges multiple streams into a batch for efficient GPU processing.
-5. **Inference Engine (GstNvInfer)** - Runs object detection using a deep learning model (YOLOv8) with configurations:
-   - Config file: `/workspace/deepstream/deepstream_project/configs/config_infer_primary_yoloV8.txt`
-   - Engine file: `/workspace/deepstream/deepstream_project/data/models/model_b1_gpu0_fp32.engine`
+5. **Inference Engine (GstNvInfer)** - Runs object detection using a deep learning model with configurations.
 6. **Video Conversion (Gstnvideoconvert)** - Converts video format for further processing.
 7. **On-Screen Display (GstNvDsOsd)** - Overlays bounding boxes and object labels on the video.
 8. **Stream Splitting (GstTee)** - Divides the processed stream into three outputs:
@@ -40,8 +26,81 @@ The pipeline follows these key stages:
    - **Message conversion for metadata transmission**
    - **Processed data streaming**
 9. **Message Conversion & Transmission (GstNvMsgConv & GstNvMsgBroker)** - Converts metadata and sends it via AMQP with GstNvMsgBroker, GstNvMsgConv.
-
 10. **File Output (GstFileSink)** - Saves the images/output in a directory.
+
+
+## 🚀 Features
+
+- Run YOLOv11 with DeepStream to detect vehicles in aerial videos or images.
+- The model is trained on the AITOD dataset, suitable for detecting vehicles from drone or satellite imagery.
+- Choose your pipeline type directly from `main.py`, such as:
+  - `images`
+  - `videos`
+  - `pre_process`
+
+- For each frame:
+  - Extract all detected objects (bounding box, label, confidence).
+  - Save the annotated frame to an output video/images.
+  - Send a single RabbitMQ message per frame with all detections.
+- Output stored as:
+  - Annotated video with bounding boxes.
+  - JSON with metadata per frame.
+
+To build a pipeline, the logic is structured such that:
+- You choose the pipeline type via `main.py`
+- The selected pipeline is implemented in the `pipeline_manager` module.
+- All helper functions used to construct the pipeline (e.g., pre-processing, frame handling) are located inside `pipeline_manager/pipeline/`.
+
+
+## 🛠️ Requirements
+
+- Python 3.8+
+- NVIDIA GPU with CUDA support
+- DeepStream SDK (6.0 or newer recommended)
+- Docker (recommended for easier setup)
+- RabbitMQ running locally or remotely
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+## 🧠 How the Pipeline Works
+
+- The `osd_sink_pad_buffer_probe` function is used to hook into each frame as it passes through the pipeline.
+- For each frame:
+  - All detected objects are collected, including their bounding box, label, and confidence.
+  - These are packed into a single dictionary.
+  - The dictionary is converted to JSON and published to RabbitMQ using `rabbitmq_publisher.py`.
+
+Sample JSON message sent per frame:
+
+```json
+{
+  "frame_number": 42,
+  "objects": [
+    {
+      "label": "car",
+      "confidence": 0.92,
+      "bbox": [120, 200, 80, 60]
+    },
+    {
+      "label": "truck",
+      "confidence": 0.88,
+      "bbox": [400, 180, 150, 100]
+    }
+  ]
+}
+```
+
+## 📦 Output
+
+- videos/images with bounding boxes and labels drawn on each frame.
+- json files: optional copy of all metadata messages saved locally.
+- **RabbitMQ** — all metadata messages are published in real-time per frame.
+
+---
 
 
 ## Running the DeepStream Docker Container
@@ -57,180 +116,15 @@ run:
 docker run --gpus all -it --net=host --privileged -v /home/user/shir/deepstream:/workspace/deepstream -e DISPLAY=$DISPLAY shir:4
 ```
 
-## Verify the DeepStream Environment
-### 1. Check NVIDIA GPU
-Run the following inside the container:
-```bash
-nvidia-smi
-```
-**Expected Result:**
-- GPU details, CUDA version, and memory usage should be displayed.
-
-### 2. Check DeepStream Version
-Verify the installed DeepStream version by running:
-```bash
-deepstream-app --version-all
-```
-
----
-
-## Guide for train YOLO Model
-
-### 1. Project Setup
-
-```bash
-cd /opt/nvidia/deepstream/deepstream-7.1/samples/configs/deepstream-app/DeepStream-Yolo
-```
-
-you can run:
-```
-python3 main.py -i /workspace/deepstream/images/cars_cut2.h264 -p '/opt/nvidia/deepstream/deepstream-7.1/lib/libnvds_amqp_proto.so' --conn-str="localhost;5672;guest" -c "cfg_amqp.txt" --topic "topicname"
-
-```
-
-## Setting Up AMQP Protocol Adapter for DeepStream
-
-This guide provides step-by-step instructions to set up the AMQP protocol adapter for DeepStream using RabbitMQ. Follow the steps carefully to configure RabbitMQ, create users, queues, and integrate with DeepStream.
-
-## Prerequisites
-- RabbitMQ installed and running.
-- Access to RabbitMQ Management Interface (default: http://localhost:15672).
-- Credentials for RabbitMQ (default: guest/guest or user-defined).
-
----
-
-## Step 1: Install RabbitMQ
-
-### Using a Package Manager
-```bash
-sudo apt-get install rabbitmq-server
-```
-
-### Check RabbitMQ Status
-```bash
-sudo service rabbitmq-server status
-```
-
-### Start RabbitMQ
-```bash
-sudo service rabbitmq-server start
-```
-
-### Enable RabbitMQ Management Plugin
-```bash
-sudo rabbitmq-plugins enable rabbitmq_management
-```
-
----
-
-## Step 2: Access RabbitMQ Management Interface
-1. Open a browser and navigate to [http://localhost:15672](http://localhost:15672).
-2. Log in using the default credentials (guest/guest) or previously configured credentials.
-
----
-
-## Step 3: Create a RabbitMQ User and Queue
-
-### Create a New User
-1. Log in to RabbitMQ locally or within the container.
-2. Execute the following commands to add a user and grant necessary permissions:
-
-```bash
-rabbitmqctl add_user myuser mypassword
-rabbitmqctl set_user_tags myuser administrator
-rabbitmqctl set_permissions -p / myuser ".*" ".*" ".*"
-```
-
-### Create a Queue
-1. Go to the **Queues** tab in the RabbitMQ Management Interface.
-2. Add a queue named `test_queue`.
-
----
-
-## Step 4: Create an Exchange and Bind to Queue
-1. Navigate to the **Exchanges** tab in RabbitMQ Management Interface.
-2. Create or use an existing exchange (e.g., `amq.topic`).
-3. Add a binding to link the `test_queue` with the exchange.
-4. In the Routing key write : topicname
-![image](https://github.com/user-attachments/assets/d00b0045-9fa8-45ad-b926-c827b8391989)
-
----
-
-## Step 5: Verify Queue and Exchange Setup
-Run the following commands to verify the queue and exchange bindings:
-
-### List Queues
-```bash
-rabbitmqctl list_queues
-```
-
-### List Bindings
-```bash
-rabbitmqctl list_bindings
-```
-
-Expected output:
-```
-Listing bindings:
-exchange    test_queue    queue    test_queue    []
-amq.topic   exchange      test_queue    queue    topicname    []
-```
-
-If the bindings are missing, restart RabbitMQ:
-```bash
-sudo rabbitmqctl stop_app
-sudo rabbitmqctl start_app
-```
-
----
 
 
-## Additional Notes
-- Ensure RabbitMQ is configured correctly for external connections if not running locally.
-- Use secure credentials for production environments.
-- To clean (or purge) messages from a queue in RabbitMQ:
-  ```
-   rabbitmqctl purge_queue test_queue
-  ```
+## 💡 TODO / Future Work
 
-For further details, refer to the [DeepStream Plugin Guide](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvmsgbroker.html).
+- Add support for detection of more object classes beyond vehicles.
+- Support real-time video streams (e.g., RTSP camera feeds).
+- Add support for automatic retraining with newly labeled data.
 
-
----
-## Saving Changes to the Container
-Once you’ve made changes inside the container, you can save them by creating a new Docker image.
-
-### 1. Find the Container ID or Name
-To list all running containers, use:
-```bash
-docker ps
-```
-
-### 2. Save the Container as a New Image
-Use the `docker commit` command to save the container's current state:
-```bash
-docker commit <container_id_or_name> <new_image_name>:<tag>
-```
-**Example:**
-```bash
-docker commit shir_container shir_with_onnx_installed
-```
-- `shir_container` – The container you were working on.
-- `shir_with_onnx_installed` – The name of the new image that includes ONNX installation.
-
-### 3. Verify the New Image
-Check if the new image was created successfully:
-```bash
-docker images
-```
-
-### 4. Exit the Running Container
-If you are still inside the container, exit by typing:
-```bash
-exit
-```
-
-links:
+## links:
 https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_docker_containers.html
 https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/9bffad1aea802f6be4419712c0a50f05d6a2d490/bindings#21-base-dependencies
 https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/master
