@@ -97,8 +97,13 @@ Sample JSON message sent per frame:
 ## 📦 Output
 
 - videos/images with bounding boxes and labels drawn on each frame.
+  ![image](https://github.com/user-attachments/assets/9f4c6452-76fa-49fb-9fba-8ab915745ff0)
+
 - json files: optional copy of all metadata messages saved locally.
+  ![image](https://github.com/user-attachments/assets/97149f65-ad6a-4a19-a58c-4541380463a2)
+
 - **RabbitMQ** — all metadata messages are published in real-time per frame.
+![image](https://github.com/user-attachments/assets/30c9d5b5-f4d2-492c-ac88-03633154cce3)
 
 ---
 
