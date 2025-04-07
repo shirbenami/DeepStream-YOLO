@@ -121,8 +121,9 @@ run:
 docker run --gpus all -it --net=host --privileged -v /home/user/shir/deepstream:/workspace/deepstream -e DISPLAY=$DISPLAY shir:4
 ```
 
-https://github.com/user-attachments/assets/76bba6f4-695f-47a0-8df2-b538c032be62
 
+
+https://github.com/user-attachments/assets/e393c29b-4bf1-492f-9708-22d98ec5d453
 
 ## 💡 TODO / Future Work
 
