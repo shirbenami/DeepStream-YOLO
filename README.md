@@ -121,6 +121,7 @@ run:
 docker run --gpus all -it --net=host --privileged -v /home/user/shir/deepstream:/workspace/deepstream -e DISPLAY=$DISPLAY shir:4
 ```
 
+https://github.com/user-attachments/assets/76bba6f4-695f-47a0-8df2-b538c032be62
 
 
 ## 💡 TODO / Future Work
@@ -134,6 +135,9 @@ https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_docker_container
 https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/9bffad1aea802f6be4419712c0a50f05d6a2d490/bindings#21-base-dependencies
 https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/master
 https://www.fosslinux.com/6339/how-to-install-rabbitmq-server-on-ubuntu-18-04-lts.htm
+
+
+
 
 **End of Guide**
 
