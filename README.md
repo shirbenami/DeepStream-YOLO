@@ -124,10 +124,7 @@ docker run --gpus all -it --net=host --privileged -v /home/user/shir/deepstream:
 Output example:
 
 
-
-https://github.com/user-attachments/assets/889bc996-8bbe-4b48-9b34-6ff46bc5fb76
-
-
+https://github.com/user-attachments/assets/a1984209-8710-4c9d-a03f-2ec4d830d8ae
 
 
 
