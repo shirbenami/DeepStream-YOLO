@@ -10,6 +10,7 @@ The pipeline processes one frame at a time, extracts metadata for all detected o
 ## Pipeline Structure
 ---
 ![newgif](https://github.com/user-attachments/assets/17118b7e-009d-4bf4-b3f5-7d9891526018)
+![newgif](https://github.com/user-attachments/assets/02a7b8c4-06d0-410e-b8ee-c263706ae6f7)
 ---
 
 The pipeline follows these key stages:
